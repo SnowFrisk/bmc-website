@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+/* Dark mode: preset */
+:root {
+  --bg-primary:    #0d1117;
+  --bg-secondary:  #161b22;
+  --bg-tertiary:   #21262d;
+  --border:        #30363d;
+  --text-primary:  #e6edf3;
+  --text-secondary:#8b949e;
+  --text-muted:    #484f58;
+
+  /* Soft, desaturated accent colours for dark theme */
+  --gold:   #c9993a;
+  --blue:   #6b9fcf;
+  --green:  #6aab7e;
+  --purple: #a07cc5;
+  --red:    #c45c58;
+  --orange: #b8822a;
+
+  --potc-theme-color:       var(--gold);
+  --resources-theme-color:  var(--green);
+  --speedmath-theme-color:  var(--blue);
+
+  --grid-opacity: 0.28;
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --bg-primary:    #fafaf8;
+  --bg-secondary:  #f4f3ef;
+  --bg-tertiary:   #eceae4;
+  --border:        #dedad2;
+  --text-primary:  #2c2b28;
+  --text-secondary:#6b6860;
+  --text-muted:    #9e9b94;
+
+  /* Warmer, slightly tinted light background + saturated-enough accents */
+  --gold:   #e7b615;
+  --blue:   #5b98df;
+  --green:  #52ca74;
+  --purple: #8250df;
+  --red:    #cf222e;
+  --orange: #bc4c00;
+
+  --potc-theme-color:       var(--gold);
+  --resources-theme-color:  var(--green);
+  --speedmath-theme-color:  var(--blue);
+
+  --grid-opacity: 0.18;
+}
+
+
+/* remove browser default focus ring on nav links */
+a:focus-visible {
+  outline: 1px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+a:focus:not(:focus-visible) {
+  outline: none;
+}
+
+html, body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  /* Body copy: humanist sans for Latin, Noto Sans for CJK */
+  font-family: 'Plus Jakarta Sans', 'Noto Sans TC', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+/* Headings use a serif pair for editorial warmth */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Lora', 'Noto Serif TC', Georgia, serif;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: var(--grid-opacity);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
