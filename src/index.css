@@ -15,7 +15,7 @@
   --blue:   #6b9fcf;
   --green:  #6aab7e;
   --purple: #a07cc5;
-  --red:    #c45c58;
+  --red:    #b0615f;
   --orange: #b8822a;
 
   --potc-theme-color:       var(--gold);
@@ -23,6 +23,20 @@
   --speedmath-theme-color:  var(--blue);
 
   --grid-opacity: 0.28;
+
+  /* Canvas geometry colours — dark theme */
+  --geom-stroke:    rgba(220, 215, 200, 0.75);
+  --geom-fill:      rgba(220, 215, 200, 0.045);
+  --geom-vertex:    rgba(220, 215, 200, 0.7);
+  --geom-vertex-halo: rgba(220, 215, 200, 0.08);
+  --geom-construction: rgba(255, 255, 255, 0.18);
+
+  /* Cloud glow colours — dark theme */
+  --cloud-a: rgba(255, 255, 255, 0.045);
+  --cloud-b: rgba(255, 255, 255, 0.035);
+  --cloud-c: rgba(255, 255, 255, 0.025);
+  --cloud-d: rgba(255, 255, 255, 0.04);
+  --cloud-e: rgba(255, 255, 255, 0.03);
 }
 
 /* Light theme */
@@ -36,11 +50,11 @@
   --text-muted:    #9e9b94;
 
   /* Warmer, slightly tinted light background + saturated-enough accents */
-  --gold:   #e7b615;
+  --gold:   #efba0d;
   --blue:   #5b98df;
   --green:  #52ca74;
   --purple: #8250df;
-  --red:    #cf222e;
+  --red:    #9a5156;
   --orange: #bc4c00;
 
   --potc-theme-color:       var(--gold);
@@ -48,6 +62,20 @@
   --speedmath-theme-color:  var(--blue);
 
   --grid-opacity: 0.18;
+
+  /* Canvas geometry colours — light theme */
+  --geom-stroke:    rgba(70, 65, 55, 0.75);
+  --geom-fill:      rgba(70, 65, 55, 0.035);
+  --geom-vertex:    rgba(70, 65, 55, 0.65);
+  --geom-vertex-halo: rgba(70, 65, 55, 0.05);
+  --geom-construction: rgba(0, 0, 0, 0.10);
+
+  /* Cloud glow colours — light theme (warm tinted shadows instead of white glow) */
+  --cloud-a: rgba(80, 75, 65, 0.04);
+  --cloud-b: rgba(80, 75, 65, 0.03);
+  --cloud-c: rgba(80, 75, 65, 0.02);
+  --cloud-d: rgba(80, 75, 65, 0.035);
+  --cloud-e: rgba(80, 75, 65, 0.025);
 }
 
 
