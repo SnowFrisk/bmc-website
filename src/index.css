@@ -50,7 +50,7 @@
   --text-muted:    #9e9b94;
 
   /* Warmer, slightly tinted light background + saturated-enough accents */
-  --gold:   #efba0d;
+  --gold:   #b45309; /* amber-gold, matches BMC-Visual-Design.md light-theme spec */
   --blue:   #5b98df;
   --green:  #52ca74;
   --purple: #8250df;
@@ -64,18 +64,18 @@
   --grid-opacity: 0.18;
 
   /* Canvas geometry colours — light theme */
-  --geom-stroke:    rgba(70, 65, 55, 0.75);
-  --geom-fill:      rgba(70, 65, 55, 0.035);
-  --geom-vertex:    rgba(70, 65, 55, 0.65);
-  --geom-vertex-halo: rgba(70, 65, 55, 0.05);
-  --geom-construction: rgba(0, 0, 0, 0.10);
+  --geom-stroke:    rgba(50, 45, 40, 0.82);
+  --geom-fill:      rgba(50, 45, 40, 0.07);
+  --geom-vertex:    rgba(50, 45, 40, 0.75);
+  --geom-vertex-halo: rgba(50, 45, 40, 0.09);
+  --geom-construction: rgba(0, 0, 0, 0.14);
 
-  /* Cloud glow colours — light theme (warm tinted shadows instead of white glow) */
-  --cloud-a: rgba(80, 75, 65, 0.04);
-  --cloud-b: rgba(80, 75, 65, 0.03);
-  --cloud-c: rgba(80, 75, 65, 0.02);
-  --cloud-d: rgba(80, 75, 65, 0.035);
-  --cloud-e: rgba(80, 75, 65, 0.025);
+  /* Cloud patches — light theme (sky-blue patches on warm white, like a partly cloudy sky) */
+  --cloud-a: rgba(210, 225, 240, 0.20);
+  --cloud-b: rgba(210, 225, 240, 0.14);
+  --cloud-c: rgba(210, 225, 240, 0.09);
+  --cloud-d: rgba(210, 225, 240, 0.17);
+  --cloud-e: rgba(210, 225, 240, 0.11);
 }
 
 

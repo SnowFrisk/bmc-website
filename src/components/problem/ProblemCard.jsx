@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useMemo } from 'react'
 import { renderLatex } from '../../lib/math-renderer'
+import { Skeleton } from '../ui/Skeleton'
+import styles from './ProblemCard.module.css'
 
 export const DIFFICULTY_STYLES = {
   1: { color: 'var(--green)',  bg: 'color-mix(in srgb, var(--green) 10%, transparent)' },
@@ -10,71 +12,48 @@ export const DIFFICULTY_STYLES = {
 /**
  * Expandable problem card.
  * `problem` must have: difficulty_level_id, difficulty_levels.{label, points}, title, latex
+ * `stepNumber` (optional): when provided, the badge reads "Step N" instead of the difficulty label.
  */
-export function ProblemCard({ problem, active, onClick }) {
+export function ProblemCard({ problem, active, onClick, stepNumber }) {
   const style = DIFFICULTY_STYLES[problem.difficulty_level_id] ?? DIFFICULTY_STYLES[2]
-  const [hovered, setHovered] = useState(false)
+  const renderedLatex = useMemo(() => renderLatex(problem.latex), [problem.latex])
 
   return (
     <div
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={e => { if (e.key === 'Enter') onClick() }}
+      className={`${styles.problemCard} ${active ? styles['problemCard--active'] : ''}`}
       style={{
-        padding: '1.25rem 1.5rem',
-        borderRadius: 10,
-        border: active
-          ? `1px solid ${style.color}`
-          : hovered
-            ? `1px solid color-mix(in srgb, ${style.color} 50%, transparent)`
-            : '1px solid var(--border)',
-        backgroundColor: active ? style.bg : 'var(--bg-secondary)',
-        cursor: 'pointer',
-        transition: 'border-color 0.2s, background-color 0.2s',
-        outline: 'none',
+        borderColor: active ? style.color : undefined,
+        backgroundColor: active ? style.bg : undefined,
       }}
     >
       {/* Header row */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <span style={{
-          fontSize: 12, fontWeight: 500,
-          color: style.color,
-          padding: '0.15rem 0.55rem',
-          borderRadius: 100,
-          border: `1px solid ${style.color}`,
-        }}>
-          {problem.difficulty_levels?.label ?? '?'}
+      <div className={styles.problemCard__header}>
+        <span
+          className={styles.problemCard__badge}
+          style={{ color: style.color, borderColor: style.color }}
+        >
+          {stepNumber ? `Step ${stepNumber}` : (problem.difficulty_levels?.label ?? '?')}
         </span>
-        <span style={{ fontSize: 12, color: style.color, fontWeight: 500 }}>
-          {problem.difficulty_levels?.points ?? '?'} pts
+        <span className={styles.problemCard__points} style={{ color: style.color }}>
+          {problem.points ?? problem.difficulty_levels?.points ?? '?'} pts
         </span>
-        <span style={{ fontSize: 14, color: 'var(--text-secondary)', flex: 1 }}>
+        <span className={styles.problemCard__title}>
           {problem.title}
         </span>
-        <span style={{
-          fontSize: 18,
-          color: 'var(--text-muted)',
-          transition: 'transform 0.25s, color 0.2s',
-          transform: active ? 'rotate(180deg)' : 'rotate(0deg)',
-          ...(active && { color: style.color }),
-        }}>
+        <span
+          className={styles.problemCard__chevron}
+          style={{ color: active ? style.color : undefined }}
+        >
           ▾
         </span>
       </div>
 
       {/* LaTeX — smooth expand */}
-      <div style={{
-        display: 'grid',
-        gridTemplateRows: active ? '1fr' : '0fr',
-        transition: 'grid-template-rows 0.3s ease',
-      }}>
-        <div style={{ overflow: 'hidden' }}>
+      <div className={`${styles.problemCard__content} ${active ? styles['problemCard__content--open'] : ''}`}>
+        <div className={styles.problemCard__contentInner}>
           <div
-            dangerouslySetInnerHTML={{ __html: renderLatex(problem.latex) }}
-            style={{ fontSize: 15, lineHeight: 1.8, paddingTop: '0.75rem' }}
+            dangerouslySetInnerHTML={{ __html: renderedLatex }}
+            className={styles.problemCard__latex}
           />
         </div>
       </div>
@@ -90,12 +69,15 @@ export function SkeletonCard() {
       border: '1px solid var(--border)',
       backgroundColor: 'var(--bg-secondary)',
       display: 'flex',
-      alignItems: 'center',
-      gap: '0.75rem',
+      flexDirection: 'column',
+      gap: 12,
     }}>
-      <div style={{ width: 48, height: 20, borderRadius: 100, backgroundColor: 'var(--bg-tertiary)' }} />
-      <div style={{ width: 32, height: 14, borderRadius: 4, backgroundColor: 'var(--bg-tertiary)' }} />
-      <div style={{ flex: 1, height: 14, borderRadius: 4, backgroundColor: 'var(--bg-tertiary)' }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <Skeleton width={64} height={20} borderRadius={100} />
+        <Skeleton width={40} height={14} />
+        <Skeleton width="45%" height={14} />
+      </div>
+      <Skeleton width="88%" height={14} />
     </div>
   )
 }

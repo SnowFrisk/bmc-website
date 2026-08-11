@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import { useTheme } from '../../hooks/useTheme'
+import styles from './Navbar.module.css'
 
 const NAV_ITEMS = [
   { to: '/problem',   label: '每週一問',  accentVar: '--potc-theme-color'      },
@@ -18,47 +19,27 @@ export default function Navbar() {
     : 'var(--border)'
 
   return (
-    <nav style={{
-      backgroundColor: 'var(--bg-secondary)',
-      // Single straight line whose colour reflects the active section
-      borderBottom: `1.5px solid ${activeBorderColor}`,
-      position: 'sticky',
-      top: 0,
-      zIndex: 50,
-    }}>
-      <div style={{
-        maxWidth: 960,
-        margin: '0 auto',
-        padding: '0 1.5rem',
-        height: 56,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '2rem',
-      }}>
+    <nav className={styles.navbar} style={{ borderBottomColor: activeBorderColor }}>
+      <div className={styles.navbar__container}>
         {/* Logo */}
-        <NavLink to="/" style={{ textDecoration: 'none' }}>
-          <span style={{ fontSize: 22, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
-            ∫ BMC
-          </span>
+        <NavLink to="/" className={styles.navbar__logo}>
+          ∫ BMC
         </NavLink>
 
-        {/* Nav links — no individual bottom border, colour only */}
-        <div style={{ display: 'flex', gap: '0.25rem', flex: 1 }}>
+        {/* Nav links */}
+        <div className={styles.navbar__nav}>
           {NAV_ITEMS.map(({ to, label, accentVar }) => (
             <NavLink
               key={to}
               to={to}
+              className={({ isActive }) =>
+                `${styles.navbar__link} ${isActive ? styles['navbar__link--active'] : ''}`
+              }
               style={({ isActive }) => ({
-                padding: '0.35rem 0.85rem',
-                borderRadius: 6,
-                fontSize: 14,
-                fontWeight: isActive ? 500 : 400,
-                textDecoration: 'none',
-                color: isActive ? `var(${accentVar})` : 'var(--text-secondary)',
+                color: isActive ? `var(${accentVar})` : undefined,
                 backgroundColor: isActive
                   ? `color-mix(in srgb, var(${accentVar}) 10%, transparent)`
-                  : 'transparent',
-                transition: 'color 0.15s, background-color 0.15s',
+                  : undefined,
               })}
             >
               {label}
@@ -66,19 +47,11 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Theme toggle — borderless, text-only */}
+        {/* Theme toggle */}
         <button
           onClick={toggleTheme}
           title={theme === 'dark' ? 'To daylight' : 'To nighttime'}
-          style={{
-            background: 'none',
-            border: 'none',
-            padding: '0.35rem 0.4rem',
-            cursor: 'pointer',
-            fontSize: 16,
-            color: 'var(--text-muted)',
-            transition: 'color 0.15s',
-          }}
+          className={styles.navbar__themeBtn}
         >
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>

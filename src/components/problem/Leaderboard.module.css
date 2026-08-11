@@ -1,0 +1,95 @@
+.leaderboard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.leaderboard__heading {
+  font-size: 17px;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.leaderboard__list {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.leaderboard__row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--bg-secondary);
+}
+
+.leaderboard__row:not(:last-child) {
+  border-bottom: 1px solid var(--border);
+}
+
+.leaderboard__rank {
+  width: 24px;
+  font-size: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.leaderboard__name {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.leaderboard__anonTag {
+  font-size: 10px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 0.05rem 0.4rem;
+}
+
+.leaderboard__solved {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.leaderboard__score {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--potc-theme-color);
+  min-width: 52px;
+  text-align: right;
+}
+
+.leaderboard__empty {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 1.5rem;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+}
+
+.leaderboard__footnote {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0;
+  text-align: right;
+}
+
+/* Skeleton row mirrors the real row's padding structure so widths match */
+.leaderboard__skeletonRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--bg-secondary);
+}
+
+.leaderboard__skeletonRow:not(:last-child) {
+  border-bottom: 1px solid var(--border);
+}

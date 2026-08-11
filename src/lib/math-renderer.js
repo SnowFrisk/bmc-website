@@ -1,13 +1,24 @@
 import katex from 'katex'
 
-/**
- * Render content that may contain:
- *   $$...$$   → display-mode KaTeX (multi-line, align, matrix, etc.)
- *   $...$     → inline-mode KaTeX
- *   plain text with no delimiters → legacy display-mode (backward compat)
- *
- * Returns an HTML string safe for dangerouslySetInnerHTML.
- */
+const MAX_CACHE_SIZE = 100
+const cache = new Map()
+
+function getCached(key, computeFn) {
+  if (cache.has(key)) {
+    // Move to end (LRU)
+    const value = cache.get(key)
+    cache.delete(key)
+    cache.set(key, value)
+    return value
+  }
+  const value = computeFn()
+  if (cache.size >= MAX_CACHE_SIZE) {
+    const firstKey = cache.keys().next().value
+    cache.delete(firstKey)
+  }
+  cache.set(key, value)
+  return value
+}
 
 function escapeHtml(text) {
   return text
@@ -18,11 +29,6 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;')
 }
 
-/**
- * Render a segment that may contain inline $...$ math.
- * Segments that start/end with `$$` have already been stripped
- * by the outer split, so any `$` here is a single-dollar inline delimiter.
- */
 function renderInlineSegment(text) {
   const parts = text.split(/(\$[^$]+\$)/g)
 
@@ -47,40 +53,46 @@ function renderInlineSegment(text) {
 export function renderLatex(content) {
   if (!content) return ''
 
-  const hasDisplayDollar = /\$\$[\s\S]*?\$\$/.test(content)
-  const hasInlineDollar  = /(?<!\$)\$(?!\$)[^$]+\$(?!\$)/.test(content)
+  return getCached(content, () => {
+    const hasDisplayDollar = /\$\$[\s\S]*?\$\$/.test(content)
+    const hasInlineDollar = /(?<!\$)\$(?!\$)[^$]+\$(?!\$)/.test(content)
 
-  if (!hasDisplayDollar && !hasInlineDollar) {
-    // Pure display formula — backward compatible with old data
-    try {
-      return katex.renderToString(content, {
-        throwOnError: true,
-        displayMode: true,
-      })
-    } catch {
-      return '<span style="color:var(--text-muted)">(formula error)</span>'
-    }
-  }
-
-  // Step 1: split by $$...$$ display blocks
-  // These become display-mode KaTeX; everything else goes through inline processing
-  const segments = content.split(/(\$\$[\s\S]*?\$\$)/g)
-
-  return segments
-    .map((seg) => {
-      if (seg.startsWith('$$') && seg.endsWith('$$')) {
-        const formula = seg.slice(2, -2)
+    if (!hasDisplayDollar && !hasInlineDollar) {
+      // Contains backslashes → legacy raw LaTeX (old data), render as display.
+      // Otherwise it's plain text — escape it instead of forcing KaTeX,
+      // so plain-text steps render at the same size as everything else.
+      if (content.includes('\\')) {
         try {
-          return katex.renderToString(formula, {
+          return katex.renderToString(content, {
             throwOnError: true,
             displayMode: true,
           })
         } catch {
-          return `<div style="color:var(--text-muted); padding:0.5rem 0">${escapeHtml(formula)}</div>`
+          return '<span style="color:var(--text-muted)">(formula error)</span>'
         }
       }
-      // Plain text or inline $...$ — handle inline rendering
-      return renderInlineSegment(seg)
-    })
-    .join('')
+      return escapeHtml(content)
+    }
+
+    // Step 1: split by $$...$$ display blocks
+    const segments = content.split(/(\$\$[\s\S]*?\$\$)/g)
+
+    return segments
+      .map((seg) => {
+        if (seg.startsWith('$$') && seg.endsWith('$$')) {
+          const formula = seg.slice(2, -2)
+          try {
+            return katex.renderToString(formula, {
+              throwOnError: true,
+              displayMode: true,
+            })
+          } catch {
+            return `<div style="color:var(--text-muted); padding:0.5rem 0">${escapeHtml(formula)}</div>`
+          }
+        }
+        // Plain text or inline $...$ — handle inline rendering
+        return renderInlineSegment(seg)
+      })
+      .join('')
+  })
 }

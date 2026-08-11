@@ -1,153 +1,134 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
 
-/**
- * Fetch all problem tiers for the currently active cycle.
- * Returns { problems, cycleNumber, loading, error }.
- *
- * "Active" means is_active = true. If multiple cycles are active the hook
- * picks the one with the highest cycle_number.
- *
- * Each problem row includes a nested `difficulty_levels` object
- * { id, label, points } via FK join.
- */
+// ── Query Keys ──
+export const queryKeys = {
+  currentProblems: ['currentProblems'],
+  pastProblems: ['pastProblems'],
+  allMainProblems: ['allMainProblems'],
+  pastProblem: (id) => ['pastProblem', id],
+}
+
+// ── Fetch Functions ──
+
+async function fetchMainProblems(active) {
+  const { data, error } = await supabase
+    .from('problems')
+    .select('*, difficulty_levels(*)')
+    .eq('is_active', active)
+    .is('parent_id', null)
+    .order('cycle_number', { ascending: false })
+  if (error) throw new Error(error.message)
+  return data ?? []
+}
+
+async function fetchStepsFor(mainIds) {
+  if (mainIds.length === 0) return []
+  const { data, error } = await supabase
+    .from('problems')
+    .select('*, difficulty_levels(*)')
+    .in('parent_id', mainIds)
+    .order('step_number', { ascending: true })
+  if (error) throw new Error(error.message)
+  return data ?? []
+}
+
+// Attach steps to main problems. Legacy rows (created before the group
+// format) have no steps — attach a synthetic single step so the UI
+// can treat every cycle uniformly.
+function attachSteps(mains, steps) {
+  const byId = new Map(mains.map((p) => [p.id, p]))
+  for (const s of steps) {
+    const main = byId.get(s.parent_id)
+    if (main) (main.steps ??= []).push(s)
+  }
+  return mains.map((main) => {
+    if (!main.steps || main.steps.length === 0) {
+      // Legacy single-tier row: treat it as its own step
+      main.steps = [{ ...main, step_number: main.difficulty_level_id ?? 1 }]
+    }
+    return main
+  })
+}
+
+async function fetchCurrentProblems() {
+  const data = await fetchMainProblems(true)
+  if (data.length === 0) return { problems: [], cycleNumber: null }
+  const latestCycle = data[0].cycle_number
+  const filtered = data.filter((p) => p.cycle_number === latestCycle)
+  const steps = await fetchStepsFor(filtered.map((p) => p.id))
+  return { problems: attachSteps(filtered, steps), cycleNumber: latestCycle }
+}
+
+async function fetchPastProblems() {
+  const mains = await fetchMainProblems(false)
+  const steps = await fetchStepsFor(mains.map((p) => p.id))
+  return attachSteps(mains, steps)
+}
+
+async function fetchPastProblemById(problemId) {
+  const { data: main, error } = await supabase
+    .from('problems')
+    .select('*, difficulty_levels(*)')
+    .eq('id', problemId)
+    .single()
+  if (error) throw new Error(error.message)
+  if (!main) return null
+  const steps = await fetchStepsFor([main.id])
+  return attachSteps([main], steps)[0]
+}
+
+// All main problems regardless of active state — used by the admin
+// archive view so cycles that are neither "current" nor archived
+// (e.g. legacy rows) still appear.
+async function fetchAllMainProblems() {
+  const { data, error } = await supabase
+    .from('problems')
+    .select('*, difficulty_levels(*)')
+    .is('parent_id', null)
+    .order('cycle_number', { ascending: false })
+    .order('id', { ascending: true })
+  if (error) throw new Error(error.message)
+  const mains = data ?? []
+  const steps = await fetchStepsFor(mains.map((p) => p.id))
+  return attachSteps(mains, steps)
+}
+
+// ── Hooks ──
 export function useCurrentProblems() {
-  const [problems, setProblems] = useState([])
-  const [cycleNumber, setCycleNumber] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    let cancelled = false
-
-    async function fetchProblems() {
-      setLoading(true)
-      setError(null)
-
-      const { data, error: sbError } = await supabase
-        .from('problems')
-        .select('*, difficulty_levels(*)')
-        .eq('is_active', true)
-        .order('cycle_number', { ascending: false })
-        .order('difficulty_level_id', { ascending: true }) // 1=Easy, 2=Medium, 3=Hard
-
-      if (cancelled) return
-
-      if (sbError) {
-        setError(sbError.message)
-        setLoading(false)
-        return
-      }
-
-      if (!data || data.length === 0) {
-        setProblems([])
-        setCycleNumber(null)
-        setLoading(false)
-        return
-      }
-
-      // Keep only the highest cycle_number group
-      const latestCycle = data[0].cycle_number
-      const filtered = data.filter(p => p.cycle_number === latestCycle)
-
-      setProblems(filtered)
-      setCycleNumber(latestCycle)
-      setLoading(false)
-    }
-
-    fetchProblems()
-    return () => { cancelled = true }
-  }, [])
-
-  return { problems, cycleNumber, loading, error }
+  return useQuery({
+    queryKey: queryKeys.currentProblems,
+    queryFn: fetchCurrentProblems,
+    enabled: isSupabaseConfigured(),
+  })
 }
 
-/**
- * Fetch all past (non-active) problems, one row per cycle,
- * picking the hardest tier (difficulty_level_id = 3) as the representative.
- * Returns { archive, loading, error }.
- */
+export function useAllMainProblems() {
+  return useQuery({
+    queryKey: queryKeys.allMainProblems,
+    queryFn: fetchAllMainProblems,
+    enabled: isSupabaseConfigured(),
+  })
+}
+
 export function usePastProblems() {
-  const [archive, setArchive] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    let cancelled = false
-
-    async function fetchArchive() {
-      setLoading(true)
-      setError(null)
-
-      const { data, error: sbError } = await supabase
-        .from('problems')
-        .select('*, difficulty_levels(*)')
-        .eq('is_active', false)
-        .order('cycle_number', { ascending: false })
-        .order('difficulty_level_id', { ascending: false }) // 3=Hard, 2=Medium, 1=Easy
-
-      if (cancelled) return
-
-      if (sbError) {
-        setError(sbError.message)
-        setLoading(false)
-        return
-      }
-
-      setArchive(data)
-      setLoading(false)
-    }
-
-    fetchArchive()
-    return () => { cancelled = true }
-  }, [])
-
-  return { archive, loading, error }
+  return useQuery({
+    queryKey: queryKeys.pastProblems,
+    queryFn: fetchPastProblems,
+    enabled: isSupabaseConfigured(),
+  })
 }
 
-/**
- * Fetch a single past problem by its ID,
- * including difficulty level metadata and solution.
- * Returns { problem, loading, error }.
- */
 export function usePastProblemById(problemId) {
-  const [problem, setProblem] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  return useQuery({
+    queryKey: queryKeys.pastProblem(problemId),
+    queryFn: () => fetchPastProblemById(problemId),
+    enabled: isSupabaseConfigured() && problemId != null,
+  })
+}
 
-  useEffect(() => {
-    if (problemId == null) {
-      setLoading(false)
-      return
-    }
-
-    let cancelled = false
-
-    async function fetchProblem() {
-      setLoading(true)
-      setError(null)
-
-      const { data, error: sbError } = await supabase
-        .from('problems')
-        .select('*, difficulty_levels(*)')
-        .eq('id', problemId)
-        .single()
-
-      if (cancelled) return
-
-      if (sbError) {
-        setError(sbError.message)
-        setLoading(false)
-        return
-      }
-
-      setProblem(data)
-      setLoading(false)
-    }
-
-    fetchProblem()
-    return () => { cancelled = true }
-  }, [problemId])
-
-  return { problem, loading, error }
+// ── Helper ──
+function isSupabaseConfigured() {
+  const url = import.meta.env.VITE_SUPABASE_URL
+  return url && !url.includes('placeholder')
 }

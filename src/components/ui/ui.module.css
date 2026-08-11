@@ -1,0 +1,110 @@
+/* ── Skeleton ── */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.skeleton {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* ── BackLink ── */
+.backLink {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  transition: color 0.2s, gap 0.2s;
+}
+
+.backLink:hover {
+  color: var(--potc-theme-color);
+  gap: 0.6rem;
+}
+
+/* ── DifficultyBadge ── */
+.difficultyBadge {
+  font-weight: 500;
+  border-radius: 100;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.difficultyBadge--sm {
+  font-size: 11px;
+  padding: 0.1rem 0.5rem;
+}
+
+.difficultyBadge--md {
+  font-size: 12px;
+  padding: 0.15rem 0.55rem;
+}
+
+/* ── CollapsiblePanel ── */
+.collapsiblePanel {
+  padding: 1.25rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-secondary);
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+  outline: none;
+}
+
+.collapsiblePanel--open {
+  border-color: var(--potc-theme-color);
+  background-color: color-mix(in srgb, var(--potc-theme-color) 8%, transparent);
+}
+
+.collapsiblePanel__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.collapsiblePanel__title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  flex: 1;
+  transition: color 0.2s;
+}
+
+.collapsiblePanel--open .collapsiblePanel__title {
+  color: var(--potc-theme-color);
+}
+
+.collapsiblePanel__chevron {
+  font-size: 18px;
+  color: var(--text-muted);
+  transition: transform 0.25s, color 0.2s;
+}
+
+.collapsiblePanel--open .collapsiblePanel__chevron {
+  color: var(--potc-theme-color);
+  transform: rotate(180deg);
+}
+
+.collapsiblePanel__content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.collapsiblePanel--open .collapsiblePanel__content {
+  grid-template-rows: 1fr;
+}
+
+.collapsiblePanel__contentInner {
+  overflow: hidden;
+}
+
+.collapsiblePanel__body {
+  font-size: 14px;
+  line-height: 1.8;
+  padding-top: 0.75rem;
+}

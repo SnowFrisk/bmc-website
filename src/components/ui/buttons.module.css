@@ -1,0 +1,96 @@
+/* ── Shared button system (Soft UI) ──
+   Groups A (primary actions) and B (secondary actions) are consolidated
+   here and inherited by page-specific classes via CSS Modules `composes`.
+   Accent colour is passed through `--btn-accent` when a button belongs
+   to a colour zone (e.g. the active step). */
+
+/* ── A. Primary action button ── */
+.btnPrimary {
+  padding: 0.55rem 1.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--btn-accent, var(--potc-theme-color));
+  background-color: transparent;
+  color: var(--btn-accent, var(--potc-theme-color));
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background-color: color-mix(in srgb, var(--btn-accent, var(--potc-theme-color)) 10%, transparent);
+}
+
+.btnPrimary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ── B. Secondary / neutral action button ── */
+.btnSecondary {
+  padding: 0.35rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background-color: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+}
+
+.btnSecondary:hover:not(:disabled) {
+  border-color: var(--potc-theme-color);
+  color: var(--potc-theme-color);
+  background-color: color-mix(in srgb, var(--potc-theme-color) 8%, transparent);
+}
+
+.btnSecondary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ── Semantic hover modifiers ── */
+.btnSuccess:hover:not(:disabled) {
+  border-color: var(--green);
+  color: var(--green);
+  background-color: color-mix(in srgb, var(--green) 8%, transparent);
+}
+
+.btnDanger:hover:not(:disabled) {
+  border-color: var(--red);
+  color: var(--red);
+  background-color: color-mix(in srgb, var(--red) 8%, transparent);
+}
+
+/* ── Pending state (network in flight) ── */
+.btnPending {
+  opacity: 0.75;
+  cursor: progress;
+  pointer-events: none;  /* prevent double-submits while connecting */
+}
+
+/* ── Spinner (small ring) ── */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--btn-accent, var(--potc-theme-color)) 25%, transparent);
+  border-top-color: var(--btn-accent, var(--potc-theme-color));
+  animation: bmc-spin 0.8s linear infinite;
+  vertical-align: -2px;
+  margin-right: 0.5rem;
+}
+
+@keyframes bmc-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+    border-top-color: color-mix(in srgb, var(--btn-accent, var(--potc-theme-color)) 50%, transparent);
+  }
+}

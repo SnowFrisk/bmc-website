@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import 'katex/dist/katex.min.css'
 import { usePastProblems } from '../hooks/useSupabase'
-import { DIFFICULTY_STYLES } from '../components/problem/ProblemCard'
+import { BackLink } from '../components/ui/BackLink'
+import styles from './pages.module.css'
 
 // Static fallback when Supabase isn't configured
 const FALLBACK_ARCHIVE = [
@@ -24,43 +25,19 @@ const FALLBACK_ARCHIVE = [
 ]
 
 export default function PastList() {
-  const { archive, loading, error } = usePastProblems()
+  const { data: archive = [], isLoading, error } = usePastProblems()
 
   const isConfigured = import.meta.env.VITE_SUPABASE_URL &&
     !import.meta.env.VITE_SUPABASE_URL.includes('placeholder')
   const items = isConfigured && archive.length > 0 ? archive : FALLBACK_ARCHIVE
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div className={styles.pastList__container}>
 
       {/* Header */}
       <section>
-        <Link
-          to="/problem"
-          style={{
-            fontSize: 13,
-            color: 'var(--text-muted)',
-            textDecoration: 'none',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            marginBottom: '1rem',
-            transition: 'color 0.2s, gap 0.2s',
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.color = 'var(--potc-theme-color)'
-            e.currentTarget.style.gap = '0.6rem'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.color = 'var(--text-muted)'
-            e.currentTarget.style.gap = '0.35rem'
-          }}
-        >
-          <span>←</span> 返回每週一問
-        </Link>
-        <h1 style={{ fontSize: 24, fontWeight: 500, margin: 0, color: 'var(--text-primary)' }}>
-          過往題目
-        </h1>
+        <BackLink to="/problem">返回每週一問</BackLink>
+        <h1 className={styles.pastList__header}>過往題目</h1>
         {!isConfigured && (
           <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '0.25rem 0 0', fontStyle: 'italic' }}>
             （目前顯示靜態示範數據 — 配置 Supabase 後將顯示真實題目）
@@ -68,18 +45,14 @@ export default function PastList() {
         )}
         {error && (
           <p style={{ fontSize: 12, color: 'var(--red)', margin: '0.25rem 0 0' }}>
-            無法載入：{error}
+            無法載入：{error.message}
           </p>
         )}
       </section>
 
       {/* List */}
-      <div style={{
-        borderRadius: 10,
-        border: '1px solid var(--border)',
-        overflow: 'hidden',
-      }}>
-        {loading && isConfigured
+      <div className={styles.pastList__list}>
+        {isLoading && isConfigured
           ? [0, 1, 2].map(i => (
             <div key={i} style={{
               padding: '0.75rem 1.25rem',
@@ -93,8 +66,7 @@ export default function PastList() {
           ))
           : items.length > 0
             ? items.map((item, i) => {
-              const lid = item.difficulty_level_id
-              const style = DIFFICULTY_STYLES[lid] ?? DIFFICULTY_STYLES[2]
+              const stepCount = item.steps?.length ?? 1
               const dateStr = item.start_date
                 ? new Date(item.start_date).toLocaleDateString('zh-TW', {
                     year: 'numeric', month: '2-digit', day: '2-digit',
@@ -107,47 +79,31 @@ export default function PastList() {
                 <Link
                   key={item.id}
                   to={`/problem/past/${item.id}`}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1rem',
-                    padding: '0.75rem 1.25rem',
-                    borderBottom: i < items.length - 1 ? '1px solid var(--border)' : 'none',
-                    textDecoration: 'none',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.15s',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--bg-tertiary)' }}
-                  onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent' }}
+                  className={styles.pastList__item}
                 >
                   {/* Cycle badge */}
-                  <span style={{
-                    fontSize: 12,
-                    fontWeight: 500,
-                    minWidth: 54,
-                    color: 'var(--text-muted)',
-                  }}>
+                  <span className={styles.pastList__cycle}>
                     Cycle {item.cycle_number}
                   </span>
 
                   {/* Title */}
-                  <span style={{ fontSize: 14, color: 'var(--text-primary)', flex: 1 }}>
+                  <span className={styles.pastList__title}>
                     {item.title}
                   </span>
 
-                  {/* Difficulty badge */}
+                  {/* Step count badge */}
                   <span style={{
                     fontSize: 11,
                     padding: '0.1rem 0.5rem',
                     borderRadius: 100,
-                    color: style.color,
-                    border: `1px solid ${style.color}`,
+                    color: 'var(--text-muted)',
+                    border: '1px solid var(--border)',
                   }}>
-                    {item.difficulty_levels?.label ?? '?'}
+                    {stepCount} 步
                   </span>
 
                   {/* Date */}
-                  <span style={{ fontSize: 12, color: 'var(--text-muted)', minWidth: 56, textAlign: 'right' }}>
+                  <span className={styles.pastList__date}>
                     {dateStr}
                   </span>
 

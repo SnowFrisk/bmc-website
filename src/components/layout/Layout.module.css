@@ -1,0 +1,11 @@
+/* ── Layout ──
+   width: 100% is required: as a flex item, `margin: 0 auto` would otherwise
+   disable align-self stretch and shrink <main> to its content width,
+   causing layout jumps between skeleton and loaded states. */
+.layout__main {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  flex: 1;
+}

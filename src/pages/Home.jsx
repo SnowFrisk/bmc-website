@@ -1,29 +1,17 @@
 import { Link } from 'react-router-dom'
 import TodaysCenter from '../components/ui/TodaysCenter'
+import styles from './pages.module.css'
 
 export default function Home() {
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: '2.5rem',
-      padding: '3rem 0 1rem',
-    }}>
+    <div className={styles.home__container}>
 
       {/* ── Hero ── */}
-      <section style={{ textAlign: 'center' }}>
-        <div style={{
-          fontSize: 44,
-          fontWeight: 500,
-          marginBottom: '0.4rem',
-          letterSpacing: '-1px',
-          fontFamily: 'Lora, Noto Serif TC, Georgia, serif',
-          color: 'var(--text-primary)',
-        }}>
+      <section className={styles.home__hero}>
+        <div className={styles.home__title}>
           ∫ BMC
         </div>
-        <p style={{ fontSize: 15, color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+        <p className={styles.home__subtitle}>
           Bishop's Math Club
         </p>
         <Link

@@ -1,0 +1,84 @@
+/* ── ProblemCard ──
+   Display-only card: not clickable, no hover feedback, default cursor. */
+.problemCard {
+  padding: 1.25rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-secondary);
+  cursor: default;
+  outline: none;
+}
+
+.problemCard--active {
+  border-color: var(--accent-color);
+  background-color: var(--accent-bg);
+}
+
+.problemCard__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.problemCard__badge {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0.15rem 0.55rem;
+  border-radius: 100px;
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+}
+
+.problemCard__points {
+  font-size: 12px;
+  color: var(--accent-color);
+  font-weight: 500;
+}
+
+.problemCard__title {
+  font-size: 14px;
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+.problemCard__chevron {
+  font-size: 18px;
+  color: var(--text-muted);
+  transition: transform 0.25s, color 0.2s;
+}
+
+.problemCard--active .problemCard__chevron {
+  color: var(--accent-color);
+  transform: rotate(180deg);
+}
+
+.problemCard__content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.problemCard__content--open {
+  grid-template-rows: 1fr;
+}
+
+.problemCard__contentInner {
+  overflow: hidden;
+}
+
+.problemCard__latex {
+  font-size: 15px;
+  line-height: 1.8;
+  padding-top: 0.75rem;
+  white-space: pre-wrap; /* plain-text steps keep their line breaks */
+}
+
+/* Unify KaTeX size: display and inline formulas both render at the
+   container size (15px) instead of KaTeX's larger display default. */
+.problemCard__latex :global(.katex) {
+  font-size: 1em;
+}
+
+.problemCard__latex :global(.katex-display) {
+  margin: 0.25rem 0;
+}

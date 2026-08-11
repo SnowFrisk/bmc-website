@@ -1,0 +1,129 @@
+.submitForm {
+  padding: 1.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transition: border-color 0.2s;
+}
+
+.submitForm__heading {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.submitForm__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.submitForm__label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.submitForm__input,
+.submitForm__textarea {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  padding: 0.55rem 0.8rem;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.submitForm__input:hover,
+.submitForm__textarea:hover {
+  border-color: color-mix(in srgb, var(--potc-theme-color) 45%, var(--border));
+}
+
+.submitForm__input:focus,
+.submitForm__textarea:focus {
+  outline: none;
+  border-color: var(--potc-theme-color);
+}
+
+.submitForm__input:disabled {
+  opacity: 0.55;
+}
+
+.submitForm__textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.submitForm__anonRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  padding: 0.3rem 0;
+}
+
+.submitForm__checkbox {
+  accent-color: var(--potc-theme-color);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.submitForm__anonLabel {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.submitForm__button {
+  composes: btnPrimary from '../ui/buttons.module.css';
+  align-self: flex-end;
+  min-width: 10rem;
+  min-height: 44px;
+  padding: 0.6rem 2rem;
+}
+
+.submitForm__noticeWrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.submitForm__noticeWrap_open {
+  grid-template-rows: 1fr;
+}
+
+.submitForm__noticeInner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.submitForm__notice {
+  font-size: 13px;
+  margin: 0;
+  padding-top: 0.15rem;
+  animation: notice-in 0.3s ease;
+}
+
+@keyframes notice-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Inline mode: attached directly below the active step card.
+   Removes top border + top corners so card + form read as one unit. */
+.submitForm__inline {
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+}

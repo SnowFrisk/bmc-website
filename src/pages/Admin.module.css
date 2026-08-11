@@ -1,0 +1,382 @@
+/* ── Admin ── */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.pageTitle {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tab--active {
+  color: var(--potc-theme-color);
+  border-bottom-color: var(--potc-theme-color);
+}
+
+/* Gate */
+.gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 0;
+}
+
+.gate__title {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.gate__form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.gate__input {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  padding: 0.55rem 0.8rem;
+  min-width: 220px;
+}
+
+.gate__input:focus {
+  outline: none;
+  border-color: var(--potc-theme-color);
+}
+
+.gate__button {
+  composes: btnPrimary from '../components/ui/buttons.module.css';
+  padding: 0.55rem 1.4rem;  /* slightly tighter than the default */
+}
+
+.gate__error {
+  font-size: 13px;
+  color: var(--red);
+  margin: 0;
+}
+
+/* Sections */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section__title {
+  font-size: 17px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.section__subtitle {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0.5rem 0 0;
+  color: var(--text-secondary);
+}
+
+.section__muted {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-secondary);
+}
+
+.form__row {
+  display: flex;
+  gap: 1rem;
+}
+
+.form__row > * {
+  flex: 1;
+}
+
+.form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form__label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.form__input,
+.form__textarea,
+.form__select {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  padding: 0.55rem 0.8rem;
+  transition: border-color 0.2s;
+}
+
+.form__input:focus,
+.form__textarea:focus,
+.form__select:focus {
+  outline: none;
+  border-color: var(--potc-theme-color);
+}
+
+.form__textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.form__select {
+  cursor: pointer;
+}
+
+.form__checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.form__checkbox {
+  accent-color: var(--potc-theme-color);
+}
+
+.form__submit {
+  composes: btnPrimary from '../components/ui/buttons.module.css';
+  align-self: flex-start;
+}
+
+.form__notice {
+  font-size: 13px;
+  margin: 0;
+}
+
+/* Submission review */
+.review__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.review__row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-secondary);
+}
+
+.review__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.review__name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.review__currentTag {
+  font-size: 10px;
+  color: var(--green);
+  border: 1px solid currentColor;
+  border-radius: 100px;
+  padding: 0.05rem 0.4rem;
+}
+
+.review__subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.review__answer {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.review__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.review__btn {
+  composes: btnSecondary from '../components/ui/buttons.module.css';
+}
+
+.review__btn--ok {
+  composes: btnSuccess from '../components/ui/buttons.module.css';
+}
+
+.review__btn--no {
+  composes: btnDanger from '../components/ui/buttons.module.css';
+}
+
+/* Status badge — colour semantics + soft fade-in on state change
+   (the span is keyed by state in JSX so it remounts and replays) */
+.review__status {
+  font-size: 12px;
+  font-weight: 500;
+  animation: bmc-status-in 0.3s ease;
+}
+
+.review__status--active  { color: var(--green); }
+.review__status--archived { color: var(--text-muted); }
+.review__status--ok      { color: var(--green); }
+.review__status--no      { color: var(--red); }
+
+@keyframes bmc-status-in {
+  from { opacity: 0; transform: translateY(2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .review__status { animation: none; }
+}
+
+/* Main problem group */
+.form__mainGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--text-muted);
+  background-color: var(--bg-secondary);
+}
+
+/* Step count selector */
+.form__countRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form__countBtn {
+  composes: btnSecondary from '../components/ui/buttons.module.css';
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.form__countBtn--active {
+  border-color: var(--potc-theme-color);
+  color: var(--potc-theme-color);
+}
+
+/* Individual step group */
+.form__stepGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-tertiary);
+}
+
+.form__stepHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.form__stepPts {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 0.05rem 0.6rem;
+  border-radius: 100px;
+}
+
+.form__stepPts--g { color: var(--green); border: 1px solid var(--green); }
+.form__stepPts--y { color: var(--gold); border: 1px solid var(--gold); }
+.form__stepPts--r { color: var(--red);  border: 1px solid var(--red);  }
+
+/* Per-step points editor */
+.form__ptsRow {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.form__ptsInput {
+  width: 56px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: inherit;
+  padding: 0.2rem 0.4rem;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.form__ptsInput:focus {
+  outline: none;
+  border-color: var(--potc-theme-color);
+}
+
+.form__stepPtsLabel {
+  font-size: 11px;
+  color: var(--text-muted);
+}

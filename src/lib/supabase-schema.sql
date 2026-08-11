@@ -86,6 +86,22 @@ CREATE POLICY "Public read submissions"
   ON submissions FOR SELECT
   USING (true);
 
+-- Admin review policies (Day 6): allow marking submissions correct/incorrect.
+-- In a real deployment this should be restricted to authenticated admin roles;
+-- for the BMC school-club context public update is the pragmatic v1 choice.
+CREATE POLICY "Public update submissions"
+  ON submissions FOR UPDATE
+  USING (true);
+
+-- Admin insert/update problems (Day 6)
+CREATE POLICY "Public insert problems"
+  ON problems FOR INSERT
+  WITH CHECK (true);
+
+CREATE POLICY "Public update problems"
+  ON problems FOR UPDATE
+  USING (true);
+
 
 -- ── 3. speed_records ────────────────────────────────────────
 
@@ -196,3 +212,31 @@ UPDATE problems SET is_active = false WHERE title = '立方和公式';
 ALTER TABLE problems DROP COLUMN IF EXISTS points;
 */
 
+
+-- ============================================================
+-- Migration: 大題 + 步驟結構（2026-08-10）
+-- ============================================================
+-- 每週由「一道大題」+「N 個步驟」組成，降低門檻提升參與率。
+--   - 大題：parent_id = NULL, step_number = NULL, difficulty_level_id = NULL
+--   - 步驟：parent_id = 大題 id, step_number = 1..N,
+--           difficulty_level_id = step_number（1=Easy 3pts, 2=Medium 5pts, 3=Hard 8pts）
+-- 舊數據（parent_id 為 NULL 嘅單題）會被前端當做「單一步驟嘅大題」處理，唔需要遷移。
+-- 喺 Supabase SQL Editor 執行：
+
+ALTER TABLE problems
+  ADD COLUMN IF NOT EXISTS parent_id   BIGINT REFERENCES problems(id) ON DELETE CASCADE,
+  ADD COLUMN IF NOT EXISTS step_number INT;
+
+-- 大題本身冇難度
+ALTER TABLE problems ALTER COLUMN difficulty_level_id DROP NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_problems_parent ON problems(parent_id);
+
+
+
+-- ============================================================
+-- Migration: custom per-step points（2026-08-11）
+-- ============================================================
+-- 出題者可以自訂每步分數；NULL 時 fallback 到 difficulty_levels.points。
+-- 喺 Supabase SQL Editor 執行：
+ALTER TABLE problems ADD COLUMN IF NOT EXISTS points INT;

@@ -1,0 +1,467 @@
+/* ── Shared Page Styles ── */
+
+/* PastProblem */
+.pastProblem__container {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.pastProblem__backLink {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  transition: color 0.2s, gap 0.2s;
+}
+
+.pastProblem__backLink:hover {
+  color: var(--potc-theme-color);
+  gap: 0.6rem;
+}
+
+.pastProblem__header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.pastProblem__title {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.pastProblem__meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.pastProblem__sectionTitle {
+  font-size: 17px;
+  margin: 0 0 1rem;
+  color: var(--text-primary);
+}
+
+.pastProblem__footer {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  margin: 0;
+  padding: 0.5rem 0;
+}
+
+/* PastList */
+.pastList__container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.pastList__header {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.pastList__list {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.pastList__item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.pastList__item:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.pastList__item:not(:last-child) {
+  border-bottom: 1px solid var(--border);
+}
+
+.pastList__cycle {
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 54px;
+  color: var(--text-muted);
+}
+
+.pastList__title {
+  font-size: 14px;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.pastList__date {
+  font-size: 12px;
+  color: var(--text-muted);
+  min-width: 56px;
+  text-align: right;
+}
+
+/* ProblemOfCycle */
+.problemCycle__container {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  width: 100%;  /* explicit full-width prevents skeleton shrink-to-content */
+}
+
+.problemCycle__header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.problemCycle__title {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.problemCycle__cycleBadge {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  background-color: var(--bg-tertiary);
+}
+
+.problemCycle__sectionTitle {
+  font-size: 17px;
+  margin: 0 0 1rem;
+  color: var(--text-primary);
+}
+
+.problemCycle__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+/* Every direct section inside the container stretches to full width */
+.problemCycle__container > section {
+  width: 100%;
+}
+
+.problemCycle__empty {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Scroll offset for step cards — guarantees a step's content is fully
+   visible below the pinned header when selected from the step rail. */
+.problemCycle__list > * {
+  scroll-margin-top: 100px;
+}
+
+/* Main problem card — sticky so the big problem stays in view */
+.problemCycle__mainCard {
+  position: sticky;
+  top: 64px;
+  z-index: 10;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-secondary);
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition:
+    padding      0.3s ease,
+    box-shadow   0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* Pinned: compact bar, shadow gone, left edge picks up theme colour */
+.problemCycle__mainCard--pinned {
+  padding: 0.6rem 1.25rem;
+  box-shadow: none;
+  border-color: color-mix(in srgb, var(--potc-theme-color) 30%, var(--border));
+}
+
+/* Badge + title always side-by-side */
+.problemCycle__mainRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.problemCycle__mainTitle {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-primary);
+  transition: font-size 0.3s ease;
+}
+
+/* Title shrinks slightly when pinned — handled via JS class on the card,
+   applied here with a data attribute so CSS Modules can select the child. */
+.problemCycle__mainCard--pinned .problemCycle__mainTitle {
+  font-size: 14px;
+}
+
+/* Formula: visible in both states.
+   Pinned → smaller, lighter — recedes to a "reference annotation". */
+.problemCycle__mainLatex {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-primary);
+  overflow: hidden;
+  opacity: 1;
+  max-height: 200px;
+  margin-top: 0.5rem;
+  transition:
+    opacity   0.3s ease,
+    max-height 0.35s ease,
+    margin-top 0.3s ease,
+    font-size  0.3s ease;
+}
+
+.problemCycle__mainCard--pinned .problemCycle__mainLatex {
+  font-size: 13px;
+  opacity: 0.5;
+  max-height: 60px;
+  margin-top: 0.25rem;
+}
+
+/* Hint: fades out completely when pinned */
+.problemCycle__mainHint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+  overflow: hidden;
+  opacity: 1;
+  max-height: 30px;
+  transition:
+    opacity    0.2s ease,
+    max-height 0.3s ease,
+    margin-top 0.3s ease;
+}
+
+.problemCycle__mainCard--pinned .problemCycle__mainHint {
+  opacity: 0;
+  max-height: 0;
+  margin-top: 0;
+}
+
+.problemCycle__mainBadge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 0.15rem 0.6rem;
+  border-radius: 100px;
+  border: 1px solid var(--potc-theme-color);
+  color: var(--potc-theme-color);
+  margin-bottom: 0.6rem;
+}
+
+.problemCycle__mainTitle {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 0.5rem;
+  color: var(--text-primary);
+}
+
+.problemCycle__mainLatex {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+.problemCycle__mainHint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 0.6rem;
+}
+
+/* Step rail 1-2-3 — two rows: track (dots + connector) above labels.
+   Splitting the rows lets the connector align with the dot centres
+   instead of the centre of the taller dot+label item. */
+.problemCycle__stepsWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.problemCycle__stepsTrack {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.problemCycle__stepItem {
+  width: 64px;
+  display: flex;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.problemCycle__stepDot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+}
+
+.problemCycle__stepDot--active {
+  background-color: color-mix(in srgb, var(--potc-theme-color) 12%, transparent);
+  border: 1.5px solid var(--potc-theme-color);
+  color: var(--potc-theme-color);
+}
+
+.problemCycle__stepDot--done {
+  background-color: color-mix(in srgb, var(--green) 12%, transparent);
+  border: 1.5px solid var(--green);
+  color: var(--green);
+}
+
+.problemCycle__stepDot--todo {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.problemCycle__stepLine {
+  flex: 1;
+  max-width: 80px;  /* connectors never exceed 80px regardless of step count */
+  height: 1px;
+  background-color: var(--border);
+}
+
+/* Label row mirrors the track row: 64px labels + flexible spacers.
+   Spacers share the same max-width so labels stay under their dots. */
+.problemCycle__stepsLabels {
+  justify-content: center;
+  display: flex;
+  gap: 10px;
+}
+
+.problemCycle__stepLabel {
+  width: 64px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.problemCycle__stepLabelSpacer {
+  flex: 1;
+  max-width: 80px;
+}
+
+/* Home */
+.home__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  padding: 3rem 0 1rem;
+}
+
+.home__hero {
+  text-align: center;
+}
+
+.home__title {
+  font-size: 44px;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  letter-spacing: -1px;
+  font-family: 'Lora', 'Noto Serif TC', Georgia, serif;
+  color: var(--text-primary);
+}
+
+.home__subtitle {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+/* Wraps one step card + its inline SubmitForm with no gap between them */
+.problemCycle__stepGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Step swap: fade out → content swap → fade in (two-phase, driven by
+   the isSwapping state in ProblemOfCycle). Each phase is longer and
+   carries a small vertical drift so it reads as one soft motion. */
+.problemCycle__stepFadeOut {
+  animation: bmc-step-out 0.25s ease forwards;
+}
+
+.problemCycle__stepFadeIn {
+  animation: bmc-step-in 0.35s ease;
+}
+
+@keyframes bmc-step-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes bmc-step-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .problemCycle__stepFadeOut,
+  .problemCycle__stepFadeIn {
+    animation: none;
+  }
+}
+
+/* Step rail hover: clickable dots give feedback */
+.problemCycle__stepItem:hover .problemCycle__stepDot {
+  border-color: color-mix(in srgb, var(--potc-theme-color) 55%, var(--border));
+  color: var(--potc-theme-color);
+  background-color: color-mix(in srgb, var(--potc-theme-color) 8%, transparent);
+}
+
+.problemCycle__stepItem:active .problemCycle__stepDot {
+  transform: scale(0.92);
+}
+
+.problemCycle__stepItem .problemCycle__stepDot {
+  transition: border-color 0.15s, color 0.15s, background-color 0.15s, transform 0.1s;
+}
