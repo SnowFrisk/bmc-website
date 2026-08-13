@@ -1,0 +1,693 @@
+/* ── Speed Arena battle ── */
+
+.battle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 0;
+  /* Entrance fallback for browsers without View Transitions — plays once
+     when the battle panel mounts (internal phase swaps reuse the same
+     root element, so they do not re-trigger this animation). */
+  animation: bmc-battle-in 0.25s ease;
+}
+
+@keyframes bmc-battle-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.battle__title {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.battle__hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+  text-align: center;
+}
+
+.battle__error {
+  font-size: 13px;
+  color: var(--red);
+  margin: 0;
+}
+
+.battle__muted {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.battle__cta {
+  min-width: 12rem;
+  min-height: 44px;
+}
+
+.battle__copyBtn {
+  min-height: 44px;
+  padding: 0.4rem 1rem;
+}
+
+/* ── Lobby rotating tips ── */
+.battle__tip {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0.5rem 0 0;
+  text-align: center;
+  animation: bmc-tip-in 0.4s ease;
+}
+
+@keyframes bmc-tip-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Question picker: difficulty | banks side by side ── */
+.battle__pickGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 480px;
+}
+
+.battle__pickCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.battle__bankList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.battle__bankRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s;
+}
+
+.battle__bankRow:hover {
+  border-color: var(--speedmath-theme-color, var(--blue));
+}
+
+.battle__bankName {
+  flex: 1;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.battle__bankMeta {
+  font-size: 12px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.battle__bankUse {
+  color: var(--speedmath-theme-color, var(--blue));
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.battle__manageLink {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 0.5rem 0.25rem;
+  align-self: center;
+  transition: color 0.15s;
+}
+
+.battle__manageLink:hover {
+  color: var(--speedmath-theme-color, var(--blue));
+}
+
+/* Vertical role cards — hosting and joining are peers */
+.battle__modeRow {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;  /* space-5: separate cards are distinct groups */
+  width: 100%;
+  max-width: 400px;
+}
+
+.battle__modeCard {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "icon title action"
+    "icon desc  action";
+  align-items: center;
+  column-gap: 0.9rem;
+  row-gap: 0.1rem;
+  padding: 1.1rem 1.3rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.battle__modeCard:hover {
+  border-color: var(--btn-accent, var(--speedmath-theme-color));
+  background-color: color-mix(in srgb, var(--btn-accent, var(--speedmath-theme-color)) 7%, transparent);
+}
+
+.battle__modeIcon {
+  grid-area: icon;
+  font-size: 22px;
+}
+
+.battle__modeTitle {
+  grid-area: title;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.battle__modeDesc {
+  grid-area: desc;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.battle__modeAction {
+  grid-area: action;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--btn-accent, var(--speedmath-theme-color));
+  white-space: nowrap;
+}
+
+/* Join code */
+.battle__code {
+  font-size: clamp(30px, 9vw, 42px);
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  padding-left: 0.35em; /* compensate letter-spacing */
+  color: var(--speedmath-theme-color, var(--blue));
+  font-variant-numeric: tabular-nums;
+}
+
+/* Inputs */
+.battle__input {
+  width: 100%;
+  max-width: 260px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 15px;
+  font-family: inherit;
+  padding: 0.6rem 0.9rem;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.battle__input:focus {
+  outline: none;
+  border-color: var(--speedmath-theme-color, var(--blue));
+}
+
+/* Player chips (lobby) */
+.battle__players {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  min-height: 2rem;
+}
+
+.battle__chip {
+  font-size: 13px;
+  color: var(--text-primary);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 0.25rem 0.8rem;
+}
+
+/* Scoreboard rows */
+.battle__scoreboard {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.battle__scoreRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+}
+
+.battle__rank {
+  width: 22px;
+  font-size: 14px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.battle__name {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.battle__pts {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--speedmath-theme-color, var(--blue));
+}
+
+/* Question — the focal element, but not overpowering (42px cap felt
+   oversized on wide screens). The timer is auxiliary info. */
+.battle__question {
+  font-size: clamp(24px, 5.5vw, 34px);
+  font-weight: 500;
+  color: var(--text-primary);
+  text-align: center;
+  padding: 1rem;
+}
+
+.battle__optBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 17px;
+  font-family: inherit;
+}
+
+.battle__timer {
+  /* Auxiliary info: smaller than the question, muted color — it only
+     turns loud (red pulse) in the last seconds as a warning signal. */
+  font-size: clamp(24px, 5vw, 32px);
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.battle__timer--danger {
+  color: var(--red);
+  animation: bmc-timer-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes bmc-timer-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+
+/* ── Fill-in answer form ── */
+/* The stage holds the form and the verdict in the same cell: the form
+   fades out on submit while the verdict fades in on top of it, so the
+   swap is smooth and nothing below jumps. */
+.battle__answerStage {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  min-height: 3.25rem; /* matches the input height — no layout jump */
+}
+
+.battle__answerForm {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  align-items: center;
+  transition: opacity 0.22s ease-out, transform 0.22s ease-out;
+}
+
+.battle__answerForm--leaving {
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+}
+
+.battle__answerInput {
+  flex: 1;
+  min-height: 48px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 20px;
+  font-family: inherit;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  transition: border-color 0.2s;
+}
+
+.battle__answerInput:focus {
+  outline: none;
+  border-color: var(--speedmath-theme-color, var(--blue));
+}
+
+.battle__verdict {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text-primary);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.22s ease-out, transform 0.22s ease-out;
+  pointer-events: none;
+}
+
+.battle__verdict--in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* The answer you submitted, rendered next to the verdict (KaTeX). */
+.battle__verdictAnswer {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* "Next question coming" hint during the 2s result transition.
+   Absolutely positioned so it never pushes the verdict line and shifts
+   the layout — the verdict box keeps its size when the hint appears. */
+.battle__nextHint {
+  font-size: 12px;
+  color: var(--text-muted);
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* ── Live LaTeX preview under the answer input ──
+   Helps the player verify syntax before submitting (e.g. \frac{1}{2}).
+   Fades out on submit — the verdict takes over showing the answer. */
+.battle__preview {
+  width: 100%;
+  max-width: 420px;
+  min-height: 2.25rem;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: opacity 0.22s ease-out, transform 0.22s ease-out,
+    min-height 0.22s ease-out, padding 0.22s ease-out, margin 0.22s ease-out;
+}
+
+.battle__preview--leaving {
+  opacity: 0;
+  transform: translateY(-4px);
+  min-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
+  border-color: transparent;
+}
+
+.battle__previewBody {
+  font-size: 18px;
+  color: var(--text-primary);
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.battle__previewHint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ── Temporary leader (corner) ── */
+/* Top bar holds leader + progress count side by side on wider screens,
+   wrapping to two lines on narrow phones. */
+.battle__topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 420px;
+}
+
+.battle__leader {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 0.25rem 0.8rem;
+}
+
+.battle__qCount {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ── Review / reveal (master–detail) ── */
+.battle__reviewTitle {
+  font-size: clamp(14px, 2vw, 17px);
+  font-weight: 500;
+  margin: 1rem 0 0.5rem;
+  color: var(--text-primary);
+}
+
+/* Question-number rail + detail panel */
+.battle__reviewMaster {
+  display: flex;
+  gap: 0.9rem;
+  width: 100%;
+  max-width: 420px;
+  align-items: stretch;
+}
+
+.battle__reviewRail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.6rem 0.45rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  align-self: flex-start;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0.5rem; /* rail stays visible while long questions scroll */
+}
+
+.battle__reviewDot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  color: var(--text-secondary);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+}
+
+.battle__reviewDot--ok {
+  color: var(--green);
+  border-color: color-mix(in srgb, var(--green) 55%, var(--border));
+  background-color: color-mix(in srgb, var(--green) 10%, transparent);
+}
+
+.battle__reviewDot--wrong {
+  color: var(--red);
+  border-color: color-mix(in srgb, var(--red) 55%, var(--border));
+  background-color: color-mix(in srgb, var(--red) 10%, transparent);
+}
+
+.battle__reviewDot--active {
+  border-color: var(--speedmath-theme-color, var(--blue));
+  box-shadow: 0 0 0 2px
+    color-mix(in srgb, var(--speedmath-theme-color, var(--blue)) 22%, transparent);
+  color: var(--speedmath-theme-color, var(--blue));
+}
+
+/* Detail panel — remounts per question (key={reviewIndex}) so the
+   fade/slide animation plays on every switch. */
+.battle__reviewDetail {
+  flex: 1;
+  min-width: 0;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  animation: bmc-review-in 0.2s ease-out;
+}
+
+@keyframes bmc-review-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.battle__reviewMeta {
+  font-size: clamp(11px, 1.8vw, 13px);
+  color: var(--text-muted);
+  margin: 0 0 0.5rem;
+}
+
+.battle__reviewQ {
+  font-size: clamp(15px, 2.4vw, 20px);
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+  overflow-x: auto; /* very long formulas scroll instead of breaking the card */
+}
+
+.battle__reviewRows {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border);
+}
+
+.battle__reviewRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.45rem 0;
+  font-size: clamp(12px, 1.8vw, 14px);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.battle__reviewAnswer {
+  color: var(--speedmath-theme-color, var(--blue));
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.battle__reviewMine--ok {
+  color: var(--green);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.battle__reviewMine--wrong {
+  color: var(--red);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.battle__reviewMine {
+  color: var(--text-muted);
+}
+
+
+/* Back navigation — shared BackButton (components/ui/BackButton) */
+
+/* ── Review enhancements ── */
+.battle__summary {
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 500;
+  color: var(--speedmath-theme-color, var(--blue));
+  margin: 0;
+}
+
+/* Highlight my own podium row */
+.battle__scoreRow--me {
+  border-color: var(--speedmath-theme-color, var(--blue));
+  background-color: color-mix(in srgb, var(--speedmath-theme-color, var(--blue)) 8%, transparent);
+}
+
+/* Per-question "x/y answered correctly" chip (inside the detail panel) */
+.battle__reviewStat {
+  font-size: 11px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 0.05rem 0.5rem;
+  white-space: nowrap;
+}
+
+/* ── Breakpoints ──
+   Small phones: everything already flows at width:100%.
+   ≥768px: containers follow the viewport (min(vw, cap)) so resizing the
+   window visibly widens columns and grows type. The answering UI caps at
+   480px (wide answer areas hurt focus); the review is a reading task and
+   gets more room (680px) so LaTeX formulas breathe. */
+@media (min-width: 768px) {
+  .battle__topBar,
+  .battle__answerStage,
+  .battle__preview,
+  .battle__scoreboard {
+    width: min(68vw, 480px);
+    max-width: none; /* lift the mobile 420px cap so the column follows vw */
+  }
+
+  .battle__reviewMaster {
+    width: min(72vw, 680px);
+    max-width: none;
+  }
+
+  /* Question picker: difficulty and banks side by side (no scrolling) */
+  .battle__pickGrid {
+    grid-template-columns: 1fr 1fr;
+    max-width: 680px;
+  }
+}
+
+/* Browsers with View Transitions must not play this element-level
+   animation on top of the snapshot animation (they would race and flash). */
+@supports (view-transition-name: none) {
+  .battle {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .battle {
+    animation: none;
+  }
+
+  .battle__tip {
+    animation: none;
+  }
+}

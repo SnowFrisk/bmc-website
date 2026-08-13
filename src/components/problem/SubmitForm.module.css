@@ -15,6 +15,26 @@
   margin: 0;
 }
 
+/* The form is the actual flex column — fields were previously glued
+   together because <form> itself had no gap. */
+.submitForm form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Name input + anonymous toggle on one row; the toggle hugs the bottom
+   edge so it aligns with the input instead of floating at the top. */
+.submitForm__nameRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.25rem;
+}
+
+.submitForm__nameRow .submitForm__field {
+  flex: 1;
+}
+
 .submitForm__field {
   display: flex;
   flex-direction: column;

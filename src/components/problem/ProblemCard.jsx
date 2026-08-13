@@ -40,12 +40,6 @@ export function ProblemCard({ problem, active, onClick, stepNumber }) {
         <span className={styles.problemCard__title}>
           {problem.title}
         </span>
-        <span
-          className={styles.problemCard__chevron}
-          style={{ color: active ? style.color : undefined }}
-        >
-          ▾
-        </span>
       </div>
 
       {/* LaTeX — smooth expand */}

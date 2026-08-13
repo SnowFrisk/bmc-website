@@ -213,50 +213,92 @@
   margin: 0;
   color: var(--text-primary);
   transition: font-size 0.3s ease;
+  flex: 1;  /* pushes the chevron toggle to the right edge */
+  min-width: 0;
 }
 
-/* Title shrinks slightly when pinned — handled via JS class on the card,
-   applied here with a data attribute so CSS Modules can select the child. */
+/* Title shrinks slightly when pinned */
 .problemCycle__mainCard--pinned .problemCycle__mainTitle {
   font-size: 14px;
 }
 
-/* Formula: visible in both states.
-   Pinned → smaller, lighter — recedes to a "reference annotation". */
+/* Formula inside the (collapsible) body */
 .problemCycle__mainLatex {
   font-size: 15px;
   line-height: 1.8;
   color: var(--text-primary);
-  overflow: hidden;
-  opacity: 1;
-  max-height: 200px;
   margin-top: 0.5rem;
-  transition:
-    opacity   0.3s ease,
-    max-height 0.35s ease,
-    margin-top 0.3s ease,
-    font-size  0.3s ease;
 }
 
-.problemCycle__mainCard--pinned .problemCycle__mainLatex {
-  font-size: 13px;
-  opacity: 0.5;
-  max-height: 60px;
-  margin-top: 0.25rem;
-}
-
-/* Hint: fades out completely when pinned */
+/* Hint inside the body */
 .problemCycle__mainHint {
   font-size: 11px;
   color: var(--text-muted);
   margin-top: 0.4rem;
-  overflow: hidden;
+}
+
+/* ── Chevron toggle — appears only while pinned ── */
+.problemCycle__mainToggle {
+  background: none;
+  border: none;
+  padding: 0.2rem 0.35rem;
+  margin-left: 0.25rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1;
+  border-radius: 4px;
+  flex-shrink: 0;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.problemCycle__mainToggle:hover {
+  color: var(--potc-theme-color);
+  background-color: color-mix(in srgb, var(--potc-theme-color) 8%, transparent);
+}
+
+.problemCycle__mainChevron {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+
+.problemCycle__mainChevron--open {
+  transform: rotate(180deg);
+}
+
+/* ── Body: grid 0fr/1fr collapse.
+   Unpinned → always open; pinned → only open when the chevron is toggled. ── */
+.problemCycle__mainBody {
+  display: grid;
+  grid-template-rows: 1fr;
   opacity: 1;
-  max-height: 30px;
-  transition:
-    opacity    0.2s ease,
-    max-height 0.3s ease,
-    margin-top 0.3s ease;
+  transition: grid-template-rows 0.3s ease, opacity 0.25s ease;
+}
+
+.problemCycle__mainBody--collapsed {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+
+.problemCycle__mainBodyInner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Pinned & expanded: grey translucent panel behind the explanation.
+   Only applied with --panel (i.e. when the chevron is opened), so the
+   collapsed body has zero margin/padding and no residual whitespace. */
+.problemCycle__mainBody--panel .problemCycle__mainBodyInner {
+  background-color: color-mix(in srgb, var(--bg-tertiary) 50%, transparent);
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  margin-top: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .problemCycle__mainBody {
+    transition: none;
+  }
 }
 
 .problemCycle__mainCard--pinned .problemCycle__mainHint {

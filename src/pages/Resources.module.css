@@ -1,0 +1,172 @@
+/* ── Math resources page ── */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 760px;
+  /* block + max-width needs auto margins to centre in <main> —
+     without them the whole shelf hugs the left edge */
+  margin: 0 auto;
+}
+
+.title {
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: 600;
+  color: var(--resources-theme-color, var(--green));
+  margin: 0;
+}
+
+.hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: -1rem 0 0;
+  text-align: center;
+}
+
+.section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sectionTitle {
+  font-size: clamp(16px, 2.4vw, 19px);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.sectionHint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: -0.25rem 0 0;
+}
+
+/* ── Featured (weekly rotation) ── */
+.featured {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.featuredGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.featuredCard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1rem;
+  border: 1.5px solid var(--resources-theme-color, var(--green));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--resources-theme-color, var(--green)) 8%, transparent);
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.featuredCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.featuredSource {
+  font-size: 11px;
+  color: var(--resources-theme-color, var(--green));
+}
+
+.featuredTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.featuredNote {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+  flex: 1;
+}
+
+.featuredGo {
+  font-size: 12px;
+  color: var(--resources-theme-color, var(--green));
+}
+
+/* ── Permanent shelf ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background-color: var(--bg-secondary);
+  text-decoration: none;
+  transition: border-color 0.15s;
+}
+
+.card:hover {
+  border-color: var(--resources-theme-color, var(--green));
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cardTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.levelBadge {
+  font-size: 10px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 1px 7px;
+  flex-shrink: 0;
+}
+
+.cardNote {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.cardTags {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-size: 10px;
+  color: var(--resources-theme-color, var(--green));
+  background: color-mix(in srgb, var(--resources-theme-color, var(--green)) 10%, transparent);
+  border-radius: 100px;
+  padding: 1px 7px;
+}

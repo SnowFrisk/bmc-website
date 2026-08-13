@@ -1,0 +1,18 @@
+/* ── Shared page-level back button (Soft UI) ──
+   Placed above the page title, top-left, by the parent layout. */
+
+.back {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  transition: color 0.15s;
+}
+
+.back:hover {
+  color: var(--text-primary);
+}

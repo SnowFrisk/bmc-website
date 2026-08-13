@@ -7,6 +7,7 @@ import ProblemOfCycle from './pages/ProblemOfCycle'
 import PastList from './pages/PastList'
 import PastProblem from './pages/PastProblem'
 import SpeedMath from './pages/SpeedMath'
+import QuestionBank from './pages/QuestionBank'
 import Resources from './pages/Resources'
 import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
@@ -23,6 +24,7 @@ export default function App() {
               <Route path="problem/past" element={<PastList />} />
               <Route path="problem/past/:problemId" element={<PastProblem />} />
               <Route path="speed" element={<SpeedMath />} />
+              <Route path="bank" element={<QuestionBank />} />
               <Route path="resources" element={<Resources />} />
               <Route path="admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />

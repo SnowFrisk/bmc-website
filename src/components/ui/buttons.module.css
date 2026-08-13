@@ -41,9 +41,9 @@
 }
 
 .btnSecondary:hover:not(:disabled) {
-  border-color: var(--potc-theme-color);
-  color: var(--potc-theme-color);
-  background-color: color-mix(in srgb, var(--potc-theme-color) 8%, transparent);
+  border-color: var(--btn-accent, var(--potc-theme-color));
+  color: var(--btn-accent, var(--potc-theme-color));
+  background-color: color-mix(in srgb, var(--btn-accent, var(--potc-theme-color)) 8%, transparent);
 }
 
 .btnSecondary:disabled {

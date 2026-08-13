@@ -1,0 +1,333 @@
+/* ── Speed Math page ── */
+
+/* Scope the mode-switch View Transition to this panel only, so the
+   Navbar/Footer stay put while the menu and game panels crossfade. */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  view-transition-name: speedmath-panel;
+}
+
+/* Mode switch (menu ↔ solo ↔ battle): the OLD panel disappears
+   instantly (no fade-out — a crossfade overlaps the outgoing snapshot
+   with the incoming panel, which reads as a "flash" of the previous
+   page), and the NEW panel rises in over 0.25s. */
+::view-transition-old(speedmath-panel) {
+  animation-duration: 0s;
+}
+
+::view-transition-new(speedmath-panel) {
+  animation: bmc-panel-in 0.45s ease;
+}
+
+@keyframes bmc-panel-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+::view-transition-new(speedmath-panel) {
+  animation: bmc-panel-in 0.25s ease;
+}
+
+/* The root layer (navbar/footer/background) is identical on both sides of
+   the switch — crossfading it adds nothing but a possible flicker when
+   the viewport (e.g. scrollbar) differs. Snap it instantly instead. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+/* Entrance fallback for browsers without View Transitions (Firefox):
+   the mounted panel still plays the same rise-in animation. */
+.menu {
+  animation: bmc-panel-in 0.25s ease;
+}
+
+.solo {
+  animation: bmc-panel-in 0.25s ease;
+}
+
+/* Browsers WITH View Transitions must NOT play these element-level
+   animations on top of the snapshot animation — the two would race and
+   the panel visibly "flashes" the previous page as they drift apart. */
+@supports (view-transition-name: none) {
+  .menu,
+  .solo {
+    animation: none;
+  }
+}
+
+/* Answering-screen HUD row: difficulty | timer | stats (no page title) */
+.solo__hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 440px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2.5rem 0;
+}
+
+.menu__hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Vertical, equal-width buttons — solo and battle are peers, so both
+   use the same visual weight and stack instead of sitting side by side. */
+.menu__cards {
+  display: grid;
+  /* auto-fit: 2 cards on the mode menu, 3 on the difficulty picker */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+  width: 100%;
+}
+
+/* Selectable mode card — fills the layout so the entry isn't a bare
+   pair of buttons floating in whitespace. */
+.menuCard {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "icon title action"
+    "icon desc  action";
+  align-items: center;
+  column-gap: 0.9rem;
+  row-gap: 0.1rem;
+  padding: 1.1rem 1.3rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.menuCard:hover {
+  border-color: var(--btn-accent, var(--speedmath-theme-color));
+  background-color: color-mix(in srgb, var(--btn-accent, var(--speedmath-theme-color)) 7%, transparent);
+}
+
+.menuCard__icon {
+  grid-area: icon;
+  font-size: 22px;
+}
+
+.menuCard__title {
+  grid-area: title;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.menuCard__desc {
+  grid-area: desc;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.menuCard__action {
+  grid-area: action;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--btn-accent, var(--speedmath-theme-color));
+  white-space: nowrap;
+}
+
+/* ── Solo mode ── */
+
+.solo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  /* Give the question stage real height so the question is centred and
+     the answer input sits at the bottom. */
+  min-height: min(55vh, 400px);
+}
+
+/* Question stage: the question owns the centre of the panel */
+.solo__stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.5rem 0;
+}
+
+/* Session stats HUD (moved up to the title row) */
+.solo__status {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Difficulty pill on the HUD row — change level without leaving the game */
+.solo__levelBtn {
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 12px;
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.solo__levelBtn:hover {
+  border-color: var(--speedmath-theme-color, var(--blue));
+  color: var(--speedmath-theme-color, var(--blue));
+}
+
+.solo__score {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--speedmath-theme-color, var(--blue));
+}
+
+.solo__acc {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.solo__timer {
+  /* Lives in the HUD row next to the title: compact, muted — only turns
+     loud (red pulse) in the last seconds as a warning signal. */
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.solo__timer--danger {
+  color: var(--red);
+  animation: bmc-timer-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes bmc-timer-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.solo__question {
+  /* The focal element, but not overpowering — a 42px cap felt oversized
+     on wide screens next to the 24px HUD title. */
+  font-size: clamp(24px, 5.5vw, 34px);
+  font-weight: 500;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+/* Fill-in answer form — mirrors the battle answer stage */
+.solo__answerForm {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  align-items: center;
+}
+
+.solo__answerInput {
+  flex: 1;
+  min-height: 48px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 20px;
+  font-family: inherit;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  transition: border-color 0.2s;
+}
+
+.solo__answerInput:focus {
+  outline: none;
+  border-color: var(--speedmath-theme-color, var(--blue));
+}
+
+.solo__verdict {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.solo__verdict--ok {
+  color: var(--green);
+}
+
+.solo__verdict--wrong {
+  color: var(--red);
+}
+
+.solo__verdictAnswer {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 0.5rem;
+}
+
+.solo__cta {
+  min-width: 10rem;
+  min-height: 44px;
+}
+
+.solo__timeUp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 0;
+}
+
+.solo__timeUp p {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ── Breakpoints ──
+   ≥768px: columns follow the viewport (min(vw, cap)) so resizing the
+   window visibly widens them, while staying capped on very wide screens. */
+@media (min-width: 768px) {
+  .menu__cards,
+  .solo {
+    width: min(68vw, 440px);
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(speedmath-panel),
+  ::view-transition-new(speedmath-panel),
+  .menu,
+  .solo {
+    animation: none;
+  }
+}

@@ -65,9 +65,15 @@ function PageSkeleton() {
 
       {/* Main problem card */}
       <section className={styles.problemCycle__mainCard} style={{ width: '100%' }}>
-        <Skeleton width={72} height={20} borderRadius={100} />
-        <Skeleton width="55%" height={18} style={{ marginTop: 12 }} />
-        <Skeleton width="80%" height={15} style={{ marginTop: 12 }} />
+        <div className={styles.problemCycle__mainRow}>
+          <Skeleton width={72} height={20} borderRadius={100} />
+          <Skeleton width="55%" height={18} />
+        </div>
+        <div className={styles.problemCycle__mainBody}>
+          <div className={styles.problemCycle__mainBodyInner}>
+            <Skeleton width="80%" height={15} style={{ marginTop: 12 }} />
+          </div>
+        </div>
       </section>
 
       {/* Step rail — mirrors the real two-row structure */}
@@ -192,6 +198,9 @@ export default function ProblemOfCycle() {
   // viewport it shrinks to a compact bar so it does not cover step content.
   const mainCardRef = useRef(null)
   const [pinned, setPinned] = useState(false)
+  // When pinned, the main problem collapses to a header row; the body
+  // (latex + hint) is revealed on demand via the chevron.
+  const [mainExpanded, setMainExpanded] = useState(false)
 
   useEffect(() => {
     const STICKY_TOP = 64 // navbar (56) + 8px breathing room
@@ -258,7 +267,8 @@ export default function ProblemOfCycle() {
       </section>
 
       {/* Main problem — sticky, only in group format.
-          Collapses to a compact bar once pinned so it stops covering steps. */}
+          Once pinned it collapses to a header row; the body (latex + hint)
+          becomes a chevron-toggled dropdown with a translucent panel. */}
       {isGroupFormat && (
         <section
           ref={mainCardRef}
@@ -267,14 +277,35 @@ export default function ProblemOfCycle() {
           <div className={styles.problemCycle__mainRow}>
             <span className={styles.problemCycle__mainBadge}>本週大題</span>
             <h2 className={styles.problemCycle__mainTitle}>{group.title}</h2>
+            {pinned && (
+              <button
+                type="button"
+                className={styles.problemCycle__mainToggle}
+                onClick={() => setMainExpanded(v => !v)}
+                aria-expanded={mainExpanded}
+                aria-label={mainExpanded ? '收起大題說明' : '展開大題說明'}
+              >
+                <span className={`${styles.problemCycle__mainChevron} ${mainExpanded ? styles['problemCycle__mainChevron--open'] : ''}`}>
+                  ▾
+                </span>
+              </button>
+            )}
           </div>
           <div
-            className={styles.problemCycle__mainLatex}
-            dangerouslySetInnerHTML={{ __html: mainLatex }}
-          />
-          <p className={styles.problemCycle__mainHint}>
-            {steps.length} 個小步驟，逐步逼近 · 揀一個步驟開始
-          </p>
+            className={`${styles.problemCycle__mainBody} ${
+              pinned && !mainExpanded ? styles['problemCycle__mainBody--collapsed'] : ''
+            } ${pinned && mainExpanded ? styles['problemCycle__mainBody--panel'] : ''}`}
+          >
+            <div className={styles.problemCycle__mainBodyInner}>
+              <div
+                className={styles.problemCycle__mainLatex}
+                dangerouslySetInnerHTML={{ __html: mainLatex }}
+              />
+              <p className={styles.problemCycle__mainHint}>
+                {steps.length} 個小步驟，逐步逼近 · 揀一個步驟開始
+              </p>
+            </div>
+          </div>
         </section>
       )}
 

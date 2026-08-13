@@ -41,17 +41,6 @@
   flex: 1;
 }
 
-.problemCard__chevron {
-  font-size: 18px;
-  color: var(--text-muted);
-  transition: transform 0.25s, color 0.2s;
-}
-
-.problemCard--active .problemCard__chevron {
-  color: var(--accent-color);
-  transform: rotate(180deg);
-}
-
 .problemCard__content {
   display: grid;
   grid-template-rows: 0fr;

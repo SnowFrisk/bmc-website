@@ -43,7 +43,7 @@ export default function SubmitForm({ steps, activeStepNumber, onSubmitted, inlin
     mutate(
       {
         problem_id: activeProblem.id,
-        student_name: isAnonymous ? '匿名' : studentName.trim(),
+        student_name: isAnonymous ? null : studentName.trim(),
         is_anonymous: isAnonymous,
         answer: answer.trim(),
       },
@@ -75,18 +75,31 @@ export default function SubmitForm({ steps, activeStepNumber, onSubmitted, inlin
       </h2>
 
       <form onSubmit={handleSubmit}>
-        {/* Name */}
-        <label className={styles.submitForm__field}>
-          <span className={styles.submitForm__label}>姓名</span>
-          <input
-            type="text"
-            value={studentName}
-            onChange={e => setStudentName(e.target.value)}
-            disabled={isAnonymous}
-            placeholder={isAnonymous ? '（已選擇匿名）' : '你的名字'}
-            className={styles.submitForm__input}
-          />
-        </label>
+        {/* Name row: name input (hidden when anonymous) + anonymous toggle */}
+        <div className={styles.submitForm__nameRow}>
+          {!isAnonymous && (
+            <label className={styles.submitForm__field}>
+              <span className={styles.submitForm__label}>姓名</span>
+              <input
+                type="text"
+                value={studentName}
+                onChange={e => setStudentName(e.target.value)}
+                placeholder="你的名字"
+                className={styles.submitForm__input}
+              />
+            </label>
+          )}
+          <label className={styles.submitForm__anonRow}>
+            <input
+              type="checkbox"
+              checked={isAnonymous}
+              onChange={e => setIsAnonymous(e.target.checked)}
+              className={styles.submitForm__checkbox}
+              style={{ accentColor: style.color }}
+            />
+            <span className={styles.submitForm__anonLabel}>匿名提交</span>
+          </label>
+        </div>
 
         {/* Answer */}
         <label className={styles.submitForm__field}>
@@ -98,18 +111,6 @@ export default function SubmitForm({ steps, activeStepNumber, onSubmitted, inlin
             placeholder="寫低你嘅答案同解題思路……"
             className={styles.submitForm__textarea}
           />
-        </label>
-
-        {/* Anonymous toggle */}
-        <label className={styles.submitForm__anonRow}>
-          <input
-            type="checkbox"
-            checked={isAnonymous}
-            onChange={e => setIsAnonymous(e.target.checked)}
-            className={styles.submitForm__checkbox}
-            style={{ accentColor: style.color }}
-          />
-          <span className={styles.submitForm__anonLabel}>匿名提交（排行榜只顯示「匿名」）</span>
         </label>
 
         {/* Submit — accent colour passed via CSS var so :hover can build on it.
