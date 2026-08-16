@@ -6,7 +6,7 @@ export const RESOURCES = [
   // ── 📚 Learn & Compete ──
   {
     title: 'Art of Problem Solving',
-    url: 'https://artofproblemsolving.com',
+    url: 'https://artofproblemsolving.com/wiki',
     category: 'learn',
     level: 'intermediate',
     note: 'AMC/AIME 備賽聖地——歷屆題庫 + 論壇 + 課程，競賽生必去',

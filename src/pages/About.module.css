@@ -1,0 +1,169 @@
+/* ── About page — reading-oriented, serif body ── */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  /* Serif for the reading experience — "club chronicle" tone.
+     Headings AND body: this page is meant to be read, not scanned. */
+  font-family: 'Noto Serif TC', 'Lora', Georgia, serif;
+}
+
+.title {
+  font-size: clamp(24px, 4vw, 34px);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.lead {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin: 0;
+  text-align: center;
+}
+
+.section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sectionTitle {
+  font-size: clamp(19px, 3vw, 24px);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.sectionHint {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ── Accordion card ── */
+.item {
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background-color: var(--bg-secondary);
+  transition: border-color 0.15s;
+}
+
+.item:hover {
+  border-color: var(--about-theme-color, var(--purple));
+}
+
+.itemHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.itemName {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  flex: 1;
+}
+
+.itemWhen {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  font-family: 'Plus Jakarta Sans', 'Noto Sans TC', system-ui, sans-serif;
+}
+
+.itemArrow {
+  font-size: 12px;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.itemArrow--open {
+  transform: rotate(90deg);
+}
+
+.itemBody {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s ease;
+}
+
+.itemBody--open {
+  grid-template-rows: 1fr;
+}
+
+.itemBodyInner {
+  /* 0fr track collapse requirements (SubmitForm pattern):
+     1. min-height: 0 — kill the automatic minimum size
+     2. overflow: hidden — clip content while the track shrinks
+     3. NO padding on this grid item: padding counts toward the
+        item's min-content contribution and would prop the 0fr track
+        open (this was the bug: padding-bottom here kept the track at
+        15px, so descriptions stayed visible below collapsed cards).
+     Padding lives one level deeper, on .itemBodyPad. */
+  min-height: 0;
+  overflow: hidden;
+}
+
+.itemBodyPad {
+  padding: 0 var(--space-5) var(--space-4);
+}
+
+.itemDesc {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.itemLinks {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.itemLink {
+  font-size: 13px;
+  font-family: 'Plus Jakarta Sans', 'Noto Sans TC', system-ui, sans-serif;
+  color: var(--about-theme-color, var(--purple));
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: var(--space-1) var(--space-3);
+  transition: border-color 0.15s;
+}
+
+.itemLink:hover {
+  border-color: var(--about-theme-color, var(--purple));
+}

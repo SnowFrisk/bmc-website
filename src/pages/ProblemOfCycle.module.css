@@ -1,132 +1,17 @@
-/* ── Shared Page Styles ── */
+/* ── ProblemOfCycle ──
+   拆自 pages.module.css（2026-08-13，統一間距系統） */
 
-/* PastProblem */
-.pastProblem__container {
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-}
-
-.pastProblem__backLink {
-  font-size: 13px;
-  color: var(--text-muted);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  margin-bottom: 1rem;
-  transition: color 0.2s, gap 0.2s;
-}
-
-.pastProblem__backLink:hover {
-  color: var(--potc-theme-color);
-  gap: 0.6rem;
-}
-
-.pastProblem__header {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-.pastProblem__title {
-  font-size: 24px;
-  font-weight: 500;
-  margin: 0;
-  color: var(--text-primary);
-}
-
-.pastProblem__meta {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin: 0;
-}
-
-.pastProblem__sectionTitle {
-  font-size: 17px;
-  margin: 0 0 1rem;
-  color: var(--text-primary);
-}
-
-.pastProblem__footer {
-  font-size: 12px;
-  color: var(--text-muted);
-  text-align: center;
-  margin: 0;
-  padding: 0.5rem 0;
-}
-
-/* PastList */
-.pastList__container {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.pastList__header {
-  font-size: 24px;
-  font-weight: 500;
-  margin: 0;
-  color: var(--text-primary);
-}
-
-.pastList__list {
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
-
-.pastList__item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.75rem 1.25rem;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.15s;
-}
-
-.pastList__item:hover {
-  background-color: var(--bg-tertiary);
-}
-
-.pastList__item:not(:last-child) {
-  border-bottom: 1px solid var(--border);
-}
-
-.pastList__cycle {
-  font-size: 12px;
-  font-weight: 500;
-  min-width: 54px;
-  color: var(--text-muted);
-}
-
-.pastList__title {
-  font-size: 14px;
-  color: var(--text-primary);
-  flex: 1;
-}
-
-.pastList__date {
-  font-size: 12px;
-  color: var(--text-muted);
-  min-width: 56px;
-  text-align: right;
-}
-
-/* ProblemOfCycle */
 .problemCycle__container {
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: var(--space-7);
   width: 100%;  /* explicit full-width prevents skeleton shrink-to-content */
 }
 
 .problemCycle__header {
   display: flex;
   align-items: baseline;
-  gap: 1rem;
+  gap: var(--space-4);
   flex-wrap: wrap;
 }
 
@@ -148,14 +33,14 @@
 
 .problemCycle__sectionTitle {
   font-size: 17px;
-  margin: 0 0 1rem;
+  margin: 0 0 var(--space-4);
   color: var(--text-primary);
 }
 
 .problemCycle__list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-4);
   width: 100%;
 }
 
@@ -168,7 +53,7 @@
   font-size: 14px;
   color: var(--text-muted);
   text-align: center;
-  padding: 2rem;
+  padding: var(--space-6);
 }
 
 /* Scroll offset for step cards — guarantees a step's content is fully
@@ -185,7 +70,7 @@
   border-radius: 12px;
   border: 1px solid var(--border);
   background-color: var(--bg-secondary);
-  padding: 1.25rem 1.5rem;
+  padding: var(--space-5) var(--space-5);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   transition:
     padding      0.3s ease,
@@ -195,7 +80,7 @@
 
 /* Pinned: compact bar, shadow gone, left edge picks up theme colour */
 .problemCycle__mainCard--pinned {
-  padding: 0.6rem 1.25rem;
+  padding: var(--space-3) var(--space-5);
   box-shadow: none;
   border-color: color-mix(in srgb, var(--potc-theme-color) 30%, var(--border));
 }
@@ -204,7 +89,7 @@
 .problemCycle__mainRow {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 .problemCycle__mainTitle {
@@ -227,22 +112,22 @@
   font-size: 15px;
   line-height: 1.8;
   color: var(--text-primary);
-  margin-top: 0.5rem;
+  margin-top: var(--space-2);
 }
 
 /* Hint inside the body */
 .problemCycle__mainHint {
   font-size: 11px;
   color: var(--text-muted);
-  margin-top: 0.4rem;
+  margin-top: var(--space-2);
 }
 
 /* ── Chevron toggle — appears only while pinned ── */
 .problemCycle__mainToggle {
   background: none;
   border: none;
-  padding: 0.2rem 0.35rem;
-  margin-left: 0.25rem;
+  padding: var(--space-1) var(--space-2);
+  margin-left: var(--space-1);
   cursor: pointer;
   color: var(--text-muted);
   font-size: 13px;
@@ -272,7 +157,7 @@
   display: grid;
   grid-template-rows: 1fr;
   opacity: 1;
-  transition: grid-template-rows 0.3s ease, opacity 0.25s ease;
+  transition: grid-template-rows 0.45s ease, opacity 0.25s ease;
 }
 
 .problemCycle__mainBody--collapsed {
@@ -291,8 +176,8 @@
 .problemCycle__mainBody--panel .problemCycle__mainBodyInner {
   background-color: color-mix(in srgb, var(--bg-tertiary) 50%, transparent);
   border-radius: 8px;
-  padding: 0.6rem 0.75rem;
-  margin-top: 0.5rem;
+  padding: var(--space-3);
+  margin-top: var(--space-2);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -315,13 +200,13 @@
   border-radius: 100px;
   border: 1px solid var(--potc-theme-color);
   color: var(--potc-theme-color);
-  margin-bottom: 0.6rem;
+  margin-bottom: var(--space-3);
 }
 
 .problemCycle__mainTitle {
   font-size: 16px;
   font-weight: 500;
-  margin: 0 0 0.5rem;
+  margin: 0 0 var(--space-2);
   color: var(--text-primary);
 }
 
@@ -334,7 +219,7 @@
 .problemCycle__mainHint {
   font-size: 11px;
   color: var(--text-muted);
-  margin-top: 0.6rem;
+  margin-top: var(--space-3);
 }
 
 /* Step rail 1-2-3 — two rows: track (dots + connector) above labels.
@@ -424,34 +309,6 @@
 }
 
 /* Home */
-.home__container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2.5rem;
-  padding: 3rem 0 1rem;
-}
-
-.home__hero {
-  text-align: center;
-}
-
-.home__title {
-  font-size: 44px;
-  font-weight: 500;
-  margin-bottom: 0.4rem;
-  letter-spacing: -1px;
-  font-family: 'Lora', 'Noto Serif TC', Georgia, serif;
-  color: var(--text-primary);
-}
-
-.home__subtitle {
-  font-size: 15px;
-  color: var(--text-secondary);
-  margin-bottom: 2rem;
-}
-
-/* Wraps one step card + its inline SubmitForm with no gap between them */
 .problemCycle__stepGroup {
   display: flex;
   flex-direction: column;
@@ -461,11 +318,11 @@
    the isSwapping state in ProblemOfCycle). Each phase is longer and
    carries a small vertical drift so it reads as one soft motion. */
 .problemCycle__stepFadeOut {
-  animation: bmc-step-out 0.25s ease forwards;
+  animation: bmc-step-out 0.45s ease forwards;
 }
 
 .problemCycle__stepFadeIn {
-  animation: bmc-step-in 0.35s ease;
+  animation: bmc-step-in 0.45s ease;
 }
 
 @keyframes bmc-step-out {
@@ -507,3 +364,4 @@
 .problemCycle__stepItem .problemCycle__stepDot {
   transition: border-color 0.15s, color 0.15s, background-color 0.15s, transform 0.1s;
 }
+

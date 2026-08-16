@@ -7,7 +7,7 @@ import SubmitForm from '../components/problem/SubmitForm'
 import Leaderboard from '../components/problem/Leaderboard'
 import { Skeleton } from '../components/ui/Skeleton'
 import { renderLatex } from '../lib/math-renderer'
-import styles from './pages.module.css'
+import styles from './ProblemOfCycle.module.css'
 
 // ── Static fallback — shown when Supabase is not yet configured ──
 const FALLBACK_GROUP = {

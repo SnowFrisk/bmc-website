@@ -16,7 +16,7 @@ const LEVEL_LABELS = {
 }
 
 export default function Resources() {
-  const featured = featuredOfTheWeek(3)
+  const featured = featuredOfTheWeek(1)
 
   return (
     <div className={styles.container}>

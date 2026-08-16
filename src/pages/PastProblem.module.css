@@ -1,0 +1,108 @@
+/* ── PastProblem ──
+   拆自 pages.module.css（2026-08-13，統一間距系統） */
+
+.pastProblem__container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+
+.pastProblem__backLink {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  transition: color 0.2s, gap 0.2s;
+}
+
+.pastProblem__backLink:hover {
+  color: var(--potc-theme-color);
+  gap: var(--space-3);
+}
+
+.pastProblem__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+.pastProblem__title {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.pastProblem__meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.pastProblem__sectionTitle {
+  font-size: 17px;
+  margin: 0 0 var(--space-4);
+  color: var(--text-primary);
+}
+
+.pastProblem__footer {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  margin: 0;
+  padding: var(--space-2) 0;
+}
+
+/* ── Loading / not-found / steps / badge / error ── */
+.pastProblem__loading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.pastProblem__skeleton {
+  border-radius: 4px;
+  background-color: var(--bg-tertiary);
+}
+
+.pastProblem__notFound {
+  text-align: center;
+  padding: var(--space-7) 0;
+}
+
+.pastProblem__notFoundText {
+  color: var(--text-muted);
+  margin: 0 0 var(--space-3);
+}
+
+.pastProblem__notFoundLink {
+  color: var(--potc-theme-color);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.pastProblem__steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.pastProblem__badge {
+  font-size: 12px;
+  padding: 0.15rem 0.55rem;
+  border-radius: 100px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.pastProblem__error {
+  font-size: 12px;
+  color: var(--red);
+  text-align: center;
+  margin: 0;
+}

@@ -10,6 +10,18 @@
   --text-secondary:#8b949e;
   --text-muted:    #484f58;
 
+  /* ── Spacing system: 4px base, generous (Soft UI: +20–30% over
+     what "feels enough"). Cards: pad space-4, gap space-3; sections:
+     space-6; page top/bottom: space-7. ── */
+  --space-1: 0.25rem;   /*  4px  micro: icon inset          */
+  --space-2: 0.5rem;    /*  8px  tag gaps                   */
+  --space-3: 0.75rem;   /* 12px  small card gaps            */
+  --space-4: 1rem;      /* 16px  card padding, default gap  */
+  --space-5: 1.5rem;    /* 24px  loose section gaps         */
+  --space-6: 2rem;      /* 32px  main section rhythm        */
+  --space-7: 3rem;      /* 48px  page top/bottom            */
+  --space-8: 4rem;      /* 64px  large page blocks          */
+
   /* Soft, desaturated accent colours for dark theme */
   --gold:   #c9993a;
   --blue:   #6b9fcf;
@@ -21,6 +33,7 @@
   --potc-theme-color:       var(--gold);
   --resources-theme-color:  var(--green);
   --speedmath-theme-color:  var(--blue);
+  --about-theme-color:      var(--purple);  /* lavender — identity page */
 
   --grid-opacity: 0.28;
 
@@ -60,6 +73,7 @@
   --potc-theme-color:       var(--gold);
   --resources-theme-color:  var(--green);
   --speedmath-theme-color:  var(--blue);
+  --about-theme-color:      var(--purple);
 
   --grid-opacity: 0.18;
 

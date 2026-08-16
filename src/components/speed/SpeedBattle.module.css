@@ -4,12 +4,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
-  padding: 1rem 0;
+  gap: var(--space-5);
+  padding: var(--space-4) 0;
   /* Entrance fallback for browsers without View Transitions — plays once
      when the battle panel mounts (internal phase swaps reuse the same
      root element, so they do not re-trigger this animation). */
-  animation: bmc-battle-in 0.25s ease;
+  animation: bmc-battle-in 0.45s ease;
 }
 
 @keyframes bmc-battle-in {
@@ -49,16 +49,16 @@
 
 .battle__copyBtn {
   min-height: 44px;
-  padding: 0.4rem 1rem;
+  padding: var(--space-2) var(--space-4);
 }
 
 /* ── Lobby rotating tips ── */
 .battle__tip {
   font-size: 12px;
   color: var(--text-muted);
-  margin: 0.5rem 0 0;
+  margin: var(--space-2) 0 0;
   text-align: center;
-  animation: bmc-tip-in 0.4s ease;
+  animation: bmc-tip-in 0.45s ease;
 }
 
 @keyframes bmc-tip-in {
@@ -70,7 +70,7 @@
 .battle__pickGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.25rem;
+  gap: var(--space-5);
   width: 100%;
   max-width: 480px;
 }
@@ -78,21 +78,21 @@
 .battle__pickCol {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: var(--space-3);
   min-width: 0;
 }
 
 .battle__bankList {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .battle__bankRow {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.65rem 0.9rem;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   border: 1px solid var(--border);
   border-radius: 10px;
   background-color: var(--bg-secondary);
@@ -106,6 +106,10 @@
 
 .battle__bankRow:hover {
   border-color: var(--speedmath-theme-color, var(--blue));
+}
+
+.battle__bankRow:active {
+  transform: scale(0.97);
 }
 
 .battle__bankName {
@@ -132,7 +136,7 @@
   font-size: 13px;
   color: var(--text-muted);
   text-decoration: none;
-  padding: 0.5rem 0.25rem;
+  padding: var(--space-2) var(--space-1);
   align-self: center;
   transition: color 0.15s;
 }
@@ -145,7 +149,7 @@
 .battle__modeRow {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;  /* space-5: separate cards are distinct groups */
+  gap: var(--space-5);  /* space-5: separate cards are distinct groups */
   width: 100%;
   max-width: 400px;
 }
@@ -157,9 +161,9 @@
     "icon title action"
     "icon desc  action";
   align-items: center;
-  column-gap: 0.9rem;
-  row-gap: 0.1rem;
-  padding: 1.1rem 1.3rem;
+  column-gap: var(--space-4);
+  row-gap: var(--space-1);
+  padding: var(--space-4) var(--space-5);
   border-radius: 12px;
   border: 1px solid var(--border);
   background-color: var(--bg-secondary);
@@ -172,7 +176,11 @@
 
 .battle__modeCard:hover {
   border-color: var(--btn-accent, var(--speedmath-theme-color));
-  background-color: color-mix(in srgb, var(--btn-accent, var(--speedmath-theme-color)) 7%, transparent);
+  background-color: color-mix(in srgb, var(--btn-accent, var(--speedmath-theme-color)) 8%, transparent);
+}
+
+.battle__modeCard:active {
+  transform: scale(0.97);
 }
 
 .battle__modeIcon {
@@ -220,7 +228,7 @@
   color: var(--text-primary);
   font-size: 15px;
   font-family: inherit;
-  padding: 0.6rem 0.9rem;
+  padding: var(--space-3) var(--space-4);
   text-align: center;
   transition: border-color 0.2s;
 }
@@ -234,9 +242,9 @@
 .battle__players {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-2);
   justify-content: center;
-  min-height: 2rem;
+  min-height: var(--space-6);
 }
 
 .battle__chip {
@@ -245,7 +253,7 @@
   background-color: var(--bg-tertiary);
   border: 1px solid var(--border);
   border-radius: 100px;
-  padding: 0.25rem 0.8rem;
+  padding: var(--space-1) var(--space-3);
 }
 
 /* Scoreboard rows */
@@ -254,14 +262,14 @@
   max-width: 420px;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: var(--space-2);
 }
 
 .battle__scoreRow {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.45rem 0.9rem;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
   border-radius: 8px;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border);
@@ -293,14 +301,14 @@
   font-weight: 500;
   color: var(--text-primary);
   text-align: center;
-  padding: 1rem;
+  padding: var(--space-4);
 }
 
 .battle__optBtn {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.9rem 1.1rem;
+  gap: var(--space-3);
+  padding: var(--space-4);
   border-radius: 10px;
   border: 1px solid var(--border);
   background-color: var(--bg-secondary);
@@ -343,7 +351,7 @@
 
 .battle__answerForm {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--space-3);
   width: 100%;
   align-items: center;
   transition: opacity 0.22s ease-out, transform 0.22s ease-out;
@@ -364,7 +372,7 @@
   color: var(--text-primary);
   font-size: 20px;
   font-family: inherit;
-  padding: 0.5rem 1rem;
+  padding: var(--space-2) var(--space-4);
   text-align: center;
   font-variant-numeric: tabular-nums;
   transition: border-color 0.2s;
@@ -381,7 +389,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
   font-size: 17px;
   font-weight: 500;
   color: var(--text-primary);
@@ -424,7 +432,7 @@
   min-height: 2.25rem;
   border: 1px dashed var(--border);
   border-radius: 8px;
-  padding: 0.4rem 0.75rem;
+  padding: var(--space-2) var(--space-3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -462,7 +470,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem 1rem;
+  gap: var(--space-2) var(--space-4);
   flex-wrap: wrap;
   width: 100%;
   max-width: 420px;
@@ -474,7 +482,7 @@
   background-color: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: 100px;
-  padding: 0.25rem 0.8rem;
+  padding: var(--space-1) var(--space-3);
 }
 
 .battle__qCount {
@@ -487,14 +495,14 @@
 .battle__reviewTitle {
   font-size: clamp(14px, 2vw, 17px);
   font-weight: 500;
-  margin: 1rem 0 0.5rem;
+  margin: var(--space-4) 0 var(--space-2);
   color: var(--text-primary);
 }
 
 /* Question-number rail + detail panel */
 .battle__reviewMaster {
   display: flex;
-  gap: 0.9rem;
+  gap: var(--space-4);
   width: 100%;
   max-width: 420px;
   align-items: stretch;
@@ -503,15 +511,15 @@
 .battle__reviewRail {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 0.6rem 0.45rem;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-2);
   background-color: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: 10px;
   align-self: flex-start;
   flex-shrink: 0;
   position: sticky;
-  top: 0.5rem; /* rail stays visible while long questions scroll */
+  top: var(--space-2); /* rail stays visible while long questions scroll */
 }
 
 .battle__reviewDot {
@@ -558,8 +566,8 @@
   background-color: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 0.9rem 1rem;
-  animation: bmc-review-in 0.2s ease-out;
+  padding: var(--space-4);
+  animation: bmc-review-in 0.45s ease-out;
 }
 
 @keyframes bmc-review-in {
@@ -570,13 +578,13 @@
 .battle__reviewMeta {
   font-size: clamp(11px, 1.8vw, 13px);
   color: var(--text-muted);
-  margin: 0 0 0.5rem;
+  margin: 0 0 var(--space-2);
 }
 
 .battle__reviewQ {
   font-size: clamp(15px, 2.4vw, 20px);
   color: var(--text-primary);
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--space-3);
   line-height: 1.5;
   overflow-x: auto; /* very long formulas scroll instead of breaking the card */
 }
@@ -591,8 +599,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.45rem 0;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
   font-size: clamp(12px, 1.8vw, 14px);
   color: var(--text-secondary);
   border-bottom: 1px solid var(--border);
@@ -643,7 +651,7 @@
   color: var(--text-muted);
   border: 1px solid var(--border);
   border-radius: 100px;
-  padding: 0.05rem 0.5rem;
+  padding: 0.05rem var(--space-2);
   white-space: nowrap;
 }
 

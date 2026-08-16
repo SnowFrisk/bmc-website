@@ -14,9 +14,3 @@ export const supabase = createClient(
   supabaseUrl,
   supabaseAnonKey
 )
-
-// Debug helper — exposes the client to the browser console.
-// REMOVE before production.
-if (typeof window !== 'undefined') {
-  window.__supabase = supabase
-}

@@ -9,6 +9,7 @@ import PastProblem from './pages/PastProblem'
 import SpeedMath from './pages/SpeedMath'
 import QuestionBank from './pages/QuestionBank'
 import Resources from './pages/Resources'
+import About from './pages/About'
 import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
 
@@ -26,6 +27,7 @@ export default function App() {
               <Route path="speed" element={<SpeedMath />} />
               <Route path="bank" element={<QuestionBank />} />
               <Route path="resources" element={<Resources />} />
+              <Route path="about" element={<About />} />
               <Route path="admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
             </Route>

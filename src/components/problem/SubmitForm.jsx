@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSubmitAnswer } from '../../hooks/useSubmissions'
-import { DIFFICULTY_STYLES } from '../problem/ProblemCard'
+import { DIFFICULTY_STYLES } from '../../data/difficulty-styles'
 import Spinner from '../ui/Spinner'
 import btnStyles from '../ui/buttons.module.css'
 import styles from './SubmitForm.module.css'

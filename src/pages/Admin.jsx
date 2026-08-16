@@ -1,22 +1,12 @@
 import { useState } from 'react'
 import { useAllSubmissions, useUpdateSubmissionStatus, useInsertProblem, useUpdateProblemActive } from '../hooks/useSubmissions'
 import { useCurrentProblems, useAllMainProblems } from '../hooks/useSupabase'
-import { DIFFICULTY_STYLES } from '../components/problem/ProblemCard'
+import { DIFFICULTY_STYLES } from '../data/difficulty-styles'
 import Spinner from '../components/ui/Spinner'
 import btnStyles from '../components/ui/buttons.module.css'
 import styles from './Admin.module.css'
 
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD
-
-function DifficultySelect({ value, onChange }) {
-  return (
-    <select value={value} onChange={e => onChange(Number(e.target.value))} className={styles.form__select}>
-      <option value={1}>Easy（3 pts）</option>
-      <option value={2}>Medium（5 pts）</option>
-      <option value={3}>Hard（8 pts）</option>
-    </select>
-  )
-}
 
 function FormField({ label, children }) {
   return (
@@ -202,7 +192,7 @@ function ProblemForm() {
               onChange={e => setField('mainLatex', e.target.value)}
               rows={3}
               className={styles.form__textarea}
-              placeholder={'例如：證明 $\sum_{k=1}^{n} k^3 = \left( \frac{n(n+1)}{2} \right)^2$'}
+              placeholder={'例如：證明 $\\sum_{k=1}^{n} k^3 = \\left( \\frac{n(n+1)}{2} \\right)^2$'}
             />
           </FormField>
           <FormField label="官方解法（可選，LaTeX）">

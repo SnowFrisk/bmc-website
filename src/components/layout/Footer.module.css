@@ -2,7 +2,7 @@
 .footer {
   border-top: 1px solid var(--border);
   background-color: var(--bg-secondary);
-  padding: 1.25rem 1.5rem;
+  padding: var(--space-5) var(--space-5);
   margin-top: auto;
   text-align: center;
   font-size: 13px;

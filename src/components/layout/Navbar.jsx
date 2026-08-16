@@ -6,6 +6,7 @@ const NAV_ITEMS = [
   { to: '/problem',   label: '每週一問',  accentVar: '--potc-theme-color'      },
   { to: '/speed',     label: '速算競技場', accentVar: '--speedmath-theme-color' },
   { to: '/resources', label: '數學資源',  accentVar: '--resources-theme-color' },
+  { to: '/about',     label: '關於',      accentVar: '--about-theme-color' },
 ]
 
 export default function Navbar() {

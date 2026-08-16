@@ -187,8 +187,16 @@ function randomTriangle(w, h, pad) {
 
 // ── component ──
 
+// Weekly rotation: the same centre for the whole ISO week (advances every
+// Monday), so the club can discuss one centre per week instead of a
+// random one per page load.
+function weekIndex(now = new Date()) {
+  const start = new Date(now.getFullYear(), 0, 1)
+  return Math.floor((now - start) / (7 * 86400000))
+}
+
 export default function TodaysCenter() {
-  const [centre] = useState(() => CENTRES[Math.floor(Math.random() * CENTRES.length)])
+  const [centre] = useState(() => CENTRES[weekIndex() % CENTRES.length])
   const [triangleVersion, setTriangleVersion] = useState(0)
   const [hovered, setHovered] = useState(false)
   const { theme } = useTheme()

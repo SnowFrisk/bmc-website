@@ -1,20 +1,15 @@
 import { useMemo } from 'react'
 import { renderLatex } from '../../lib/math-renderer'
+import { DIFFICULTY_STYLES } from '../../data/difficulty-styles'
 import { Skeleton } from '../ui/Skeleton'
 import styles from './ProblemCard.module.css'
-
-export const DIFFICULTY_STYLES = {
-  1: { color: 'var(--green)',  bg: 'color-mix(in srgb, var(--green) 10%, transparent)' },
-  2: { color: 'var(--gold)',   bg: 'color-mix(in srgb, var(--gold) 10%, transparent)'  },
-  3: { color: 'var(--red)',    bg: 'color-mix(in srgb, var(--red) 10%, transparent)'   },
-}
 
 /**
  * Expandable problem card.
  * `problem` must have: difficulty_level_id, difficulty_levels.{label, points}, title, latex
  * `stepNumber` (optional): when provided, the badge reads "Step N" instead of the difficulty label.
  */
-export function ProblemCard({ problem, active, onClick, stepNumber }) {
+export function ProblemCard({ problem, active, stepNumber }) {
   const style = DIFFICULTY_STYLES[problem.difficulty_level_id] ?? DIFFICULTY_STYLES[2]
   const renderedLatex = useMemo(() => renderLatex(problem.latex), [problem.latex])
 

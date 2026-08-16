@@ -15,14 +15,14 @@
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  margin-bottom: 1rem;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
   transition: color 0.2s, gap 0.2s;
 }
 
 .backLink:hover {
   color: var(--potc-theme-color);
-  gap: 0.6rem;
+  gap: var(--space-3);
 }
 
 /* ── DifficultyBadge ── */
@@ -31,12 +31,12 @@
   border-radius: 100;
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: var(--space-1);
 }
 
 .difficultyBadge--sm {
   font-size: 11px;
-  padding: 0.1rem 0.5rem;
+  padding: 0.1rem var(--space-2);
 }
 
 .difficultyBadge--md {
@@ -46,7 +46,7 @@
 
 /* ── CollapsiblePanel ── */
 .collapsiblePanel {
-  padding: 1.25rem 1.5rem;
+  padding: var(--space-5) var(--space-5);
   border-radius: 10px;
   border: 1px solid var(--border);
   background-color: var(--bg-secondary);
@@ -63,7 +63,7 @@
 .collapsiblePanel__header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 .collapsiblePanel__title {
@@ -92,7 +92,7 @@
 .collapsiblePanel__content {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.3s ease;
+  transition: grid-template-rows 0.45s ease;
 }
 
 .collapsiblePanel--open .collapsiblePanel__content {
@@ -100,11 +100,12 @@
 }
 
 .collapsiblePanel__contentInner {
+  min-height: 0; /* 0fr track needs this to collapse (see About.module.css note) */
   overflow: hidden;
 }
 
 .collapsiblePanel__body {
   font-size: 14px;
   line-height: 1.8;
-  padding-top: 0.75rem;
+  padding-top: var(--space-3);
 }

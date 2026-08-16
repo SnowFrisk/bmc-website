@@ -1,0 +1,43 @@
+/* ── ErrorBoundary fallback screen ── */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0 0 var(--space-4);
+}
+
+.message {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-5);
+}
+
+.reloadBtn {
+  padding: var(--space-2) var(--space-5);
+  font-size: 14px;
+  border-radius: 6px;
+}
+
+.details {
+  margin-top: var(--space-5);
+  padding: var(--space-4);
+  border-radius: 6px;
+  background-color: var(--bg-tertiary);
+  color: var(--text-muted);
+  font-size: 12px;
+  max-width: 100%;
+  overflow: auto;
+  text-align: left;
+}

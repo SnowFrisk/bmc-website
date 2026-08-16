@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: var(--space-5);
   view-transition-name: speedmath-panel;
 }
 
@@ -28,7 +28,7 @@
 }
 
 ::view-transition-new(speedmath-panel) {
-  animation: bmc-panel-in 0.25s ease;
+  animation: bmc-panel-in 0.45s ease;
 }
 
 /* The root layer (navbar/footer/background) is identical on both sides of
@@ -42,11 +42,11 @@
 /* Entrance fallback for browsers without View Transitions (Firefox):
    the mounted panel still plays the same rise-in animation. */
 .menu {
-  animation: bmc-panel-in 0.25s ease;
+  animation: bmc-panel-in 0.45s ease;
 }
 
 .solo {
-  animation: bmc-panel-in 0.25s ease;
+  animation: bmc-panel-in 0.45s ease;
 }
 
 /* Browsers WITH View Transitions must NOT play these element-level
@@ -64,7 +64,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem 1rem;
+  gap: var(--space-3) var(--space-4);
   flex-wrap: wrap;
   width: 100%;
   max-width: 440px;
@@ -81,7 +81,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-4);
   padding: 2.5rem 0;
 }
 
@@ -97,7 +97,7 @@
   display: grid;
   /* auto-fit: 2 cards on the mode menu, 3 on the difficulty picker */
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 0.75rem;
+  gap: var(--space-3);
   width: 100%;
 }
 
@@ -110,9 +110,9 @@
     "icon title action"
     "icon desc  action";
   align-items: center;
-  column-gap: 0.9rem;
-  row-gap: 0.1rem;
-  padding: 1.1rem 1.3rem;
+  column-gap: var(--space-4);
+  row-gap: var(--space-1);
+  padding: var(--space-4) var(--space-5);
   border-radius: 12px;
   border: 1px solid var(--border);
   background-color: var(--bg-secondary);
@@ -125,7 +125,11 @@
 
 .menuCard:hover {
   border-color: var(--btn-accent, var(--speedmath-theme-color));
-  background-color: color-mix(in srgb, var(--btn-accent, var(--speedmath-theme-color)) 7%, transparent);
+  background-color: color-mix(in srgb, var(--btn-accent, var(--speedmath-theme-color)) 8%, transparent);
+}
+
+.menuCard:active {
+  transform: scale(0.97);
 }
 
 .menuCard__icon {
@@ -159,7 +163,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: var(--space-5);
   width: 100%;
   /* Give the question stage real height so the question is centred and
      the answer input sits at the bottom. */
@@ -173,14 +177,14 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 0.5rem 0;
+  padding: var(--space-2) 0;
 }
 
 /* Session stats HUD (moved up to the title row) */
 .solo__status {
   display: flex;
   align-items: baseline;
-  gap: 0.75rem;
+  gap: var(--space-3);
   flex-wrap: wrap;
   justify-content: flex-end;
 }
@@ -193,7 +197,7 @@
   color: var(--text-secondary);
   font-family: inherit;
   font-size: 12px;
-  padding: 0.25rem 0.75rem;
+  padding: var(--space-1) var(--space-3);
   cursor: pointer;
   white-space: nowrap;
   transition: border-color 0.15s, color 0.15s;
@@ -247,7 +251,7 @@
 /* Fill-in answer form — mirrors the battle answer stage */
 .solo__answerForm {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--space-3);
   width: 100%;
   align-items: center;
 }
@@ -261,7 +265,7 @@
   color: var(--text-primary);
   font-size: 20px;
   font-family: inherit;
-  padding: 0.5rem 1rem;
+  padding: var(--space-2) var(--space-4);
   text-align: center;
   font-variant-numeric: tabular-nums;
   transition: border-color 0.2s;
@@ -289,7 +293,7 @@
   font-size: 13px;
   font-weight: 400;
   color: var(--text-muted);
-  margin-left: 0.5rem;
+  margin-left: var(--space-2);
 }
 
 .solo__cta {
@@ -301,8 +305,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  padding: 1.5rem 0;
+  gap: var(--space-4);
+  padding: var(--space-5) 0;
 }
 
 .solo__timeUp p {

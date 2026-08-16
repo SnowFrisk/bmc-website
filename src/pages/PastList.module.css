@@ -1,0 +1,61 @@
+/* ── PastList ──
+   拆自 pages.module.css（2026-08-13，統一間距系統） */
+
+.pastList__container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.pastList__header {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.pastList__list {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.pastList__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.pastList__item:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.pastList__item:not(:last-child) {
+  border-bottom: 1px solid var(--border);
+}
+
+.pastList__cycle {
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 54px;
+  color: var(--text-muted);
+}
+
+.pastList__title {
+  font-size: 14px;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.pastList__date {
+  font-size: 12px;
+  color: var(--text-muted);
+  min-width: 56px;
+  text-align: right;
+}
+
+/* ProblemOfCycle */

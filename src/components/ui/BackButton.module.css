@@ -9,7 +9,7 @@
   font-size: 13px;
   font-family: inherit;
   cursor: pointer;
-  padding: 0.5rem 0;
+  padding: var(--space-2) 0;
   transition: color 0.15s;
 }
 

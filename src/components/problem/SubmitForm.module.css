@@ -5,7 +5,7 @@
   background-color: var(--bg-secondary);
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: var(--space-5);
   transition: border-color 0.2s;
 }
 
@@ -20,7 +20,7 @@
 .submitForm form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: var(--space-5);
 }
 
 /* Name input + anonymous toggle on one row; the toggle hugs the bottom
@@ -28,7 +28,7 @@
 .submitForm__nameRow {
   display: flex;
   align-items: flex-end;
-  gap: 1.25rem;
+  gap: var(--space-5);
 }
 
 .submitForm__nameRow .submitForm__field {
@@ -38,7 +38,7 @@
 .submitForm__field {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .submitForm__label {
@@ -54,7 +54,7 @@
   color: var(--text-primary);
   font-size: 14px;
   font-family: inherit;
-  padding: 0.55rem 0.8rem;
+  padding: var(--space-2) var(--space-3);
   transition: border-color 0.2s, background-color 0.2s;
 }
 
@@ -81,10 +81,10 @@
 .submitForm__anonRow {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
   cursor: pointer;
   user-select: none;
-  padding: 0.3rem 0;
+  padding: var(--space-1) 0;
 }
 
 .submitForm__checkbox {
@@ -105,13 +105,13 @@
   align-self: flex-end;
   min-width: 10rem;
   min-height: 44px;
-  padding: 0.6rem 2rem;
+  padding: var(--space-3) var(--space-6);
 }
 
 .submitForm__noticeWrap {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.3s ease;
+  transition: grid-template-rows 0.45s ease;
 }
 
 .submitForm__noticeWrap_open {
@@ -126,7 +126,7 @@
 .submitForm__notice {
   font-size: 13px;
   margin: 0;
-  padding-top: 0.15rem;
+  padding-top: var(--space-1);
   animation: notice-in 0.3s ease;
 }
 

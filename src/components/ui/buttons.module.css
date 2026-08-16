@@ -6,7 +6,7 @@
 
 /* ── A. Primary action button ── */
 .btnPrimary {
-  padding: 0.55rem 1.6rem;
+  padding: var(--space-2) var(--space-5);
   border-radius: 8px;
   border: 1px solid var(--btn-accent, var(--potc-theme-color));
   background-color: transparent;
@@ -29,7 +29,7 @@
 
 /* ── B. Secondary / neutral action button ── */
 .btnSecondary {
-  padding: 0.35rem 0.9rem;
+  padding: var(--space-2) var(--space-4);
   border-radius: 6px;
   border: 1px solid var(--border);
   background-color: transparent;
@@ -81,7 +81,7 @@
   border-top-color: var(--btn-accent, var(--potc-theme-color));
   animation: bmc-spin 0.8s linear infinite;
   vertical-align: -2px;
-  margin-right: 0.5rem;
+  margin-right: var(--space-2);
 }
 
 @keyframes bmc-spin {

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import 'katex/dist/katex.min.css'
 import { usePastProblems } from '../hooks/useSupabase'
 import { BackLink } from '../components/ui/BackLink'
-import styles from './pages.module.css'
+import styles from './PastList.module.css'
 
 // Static fallback when Supabase isn't configured
 const FALLBACK_ARCHIVE = [
@@ -65,7 +65,7 @@ export default function PastList() {
             </div>
           ))
           : items.length > 0
-            ? items.map((item, i) => {
+            ? items.map(item => {
               const stepCount = item.steps?.length ?? 1
               const dateStr = item.start_date
                 ? new Date(item.start_date).toLocaleDateString('zh-TW', {

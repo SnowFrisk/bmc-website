@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: var(--space-5);
   width: 100%;
 }
 
@@ -35,7 +35,7 @@
   color: var(--text-primary);
   font-family: inherit;
   font-size: 14px;
-  padding: 0.65rem 0.9rem;
+  padding: var(--space-3) var(--space-4);
   transition: border-color 0.2s;
 }
 
@@ -61,7 +61,7 @@
 .bankList {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-3);
   width: 100%;
   max-width: 480px;
 }
@@ -70,8 +70,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 0.9rem 1.1rem;
+  gap: var(--space-4);
+  padding: var(--space-4);
   border: 1px solid var(--border);
   border-radius: 12px;
   background-color: var(--bg-secondary);
@@ -87,18 +87,18 @@
 .bankCard__meta {
   font-size: 12px;
   color: var(--text-muted);
-  margin: 0.2rem 0 0;
+  margin: var(--space-1) 0 0;
 }
 
 .bankCard__actions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   flex-shrink: 0;
 }
 
 .bankCard__actions button {
   min-height: 36px;
-  padding: 0.3rem 0.9rem;
+  padding: var(--space-1) var(--space-4);
 }
 
 .deleteBtn {
@@ -109,7 +109,7 @@
 .qList {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-3);
   width: 100%;
   max-width: 560px;
 }
@@ -117,8 +117,8 @@
 .qRow {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 0.9rem;
+  gap: var(--space-2);
+  padding: var(--space-4);
   border: 1px solid var(--border);
   border-radius: 12px;
   background-color: var(--bg-secondary);
@@ -126,7 +126,7 @@
 
 .qRow__meta {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   align-items: center;
 }
 
@@ -139,7 +139,7 @@
 .simplestToggle {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--space-2);
   font-size: 13px;
   color: var(--text-secondary);
   cursor: pointer;
@@ -180,7 +180,7 @@
 
 .actions {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--space-3);
   align-items: center;
 }
 

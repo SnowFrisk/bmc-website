@@ -10,11 +10,11 @@
 .navbar__container {
   max-width: 960px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 var(--space-5);
   height: 56px;
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: var(--space-6);
 }
 
 .navbar__logo {
@@ -27,12 +27,12 @@
 
 .navbar__nav {
   display: flex;
-  gap: 0.25rem;
+  gap: var(--space-1);
   flex: 1;
 }
 
 .navbar__link {
-  padding: 0.35rem 0.85rem;
+  padding: var(--space-2) var(--space-4);
   border-radius: 6px;
   font-size: 14px;
   font-weight: 400;
@@ -53,7 +53,7 @@
 .navbar__themeBtn {
   background: none;
   border: none;
-  padding: 0.35rem 0.4rem;
+  padding: var(--space-2);
   cursor: pointer;
   font-size: 16px;
   color: var(--text-muted);

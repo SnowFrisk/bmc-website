@@ -1,4 +1,4 @@
-import { DIFFICULTY_STYLES } from '../problem/ProblemCard'
+import { DIFFICULTY_STYLES } from '../../data/difficulty-styles'
 
 export function DifficultyBadge({ levelId, label, points, size = 'md' }) {
   const style = DIFFICULTY_STYLES[levelId] ?? DIFFICULTY_STYLES[2]

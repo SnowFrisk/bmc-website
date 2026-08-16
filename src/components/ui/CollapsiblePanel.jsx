@@ -1,146 +1,40 @@
 import { useState } from 'react'
 import { renderLatex } from '../../lib/math-renderer'
+import styles from './CollapsiblePanel.module.css'
 
-export function CollapsiblePanel({
-  title,
-  children,
-  activeColor = 'var(--potc-theme-color)',
-  defaultOpen = false,
-  headerContent,
-}) {
+// Shared collapsible chrome: accent color arrives as --panel-accent.
+function Panel({ title, children, headerContent, activeColor, defaultOpen }) {
   const [open, setOpen] = useState(defaultOpen)
-
   return (
     <div
       onClick={() => setOpen(!open)}
       role="button"
       tabIndex={0}
       onKeyDown={e => { if (e.key === 'Enter') setOpen(!open) }}
-      style={{
-        padding: '1.25rem 1.5rem',
-        borderRadius: 10,
-        border: open
-          ? `1px solid ${activeColor}`
-          : '1px solid var(--border)',
-        backgroundColor: open
-          ? `color-mix(in srgb, ${activeColor} 8%, transparent)`
-          : 'var(--bg-secondary)',
-        cursor: 'pointer',
-        transition: 'border-color 0.2s, background-color 0.2s',
-        outline: 'none',
-      }}
+      className={`${styles.panel} ${open ? styles['panel--open'] : ''}`}
+      style={{ '--panel-accent': activeColor }}
     >
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.75rem',
-      }}>
-        {headerContent ? (
-          headerContent
-        ) : (
-          <span style={{
-            fontSize: 14,
-            fontWeight: 500,
-            color: open ? activeColor : 'var(--text-secondary)',
-            flex: 1,
-            transition: 'color 0.2s',
-          }}>
-            {title}
-          </span>
-        )}
-        <span style={{
-          fontSize: 18,
-          color: 'var(--text-muted)',
-          transition: 'transform 0.25s, color 0.2s',
-          transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
-          ...(open && { color: activeColor }),
-        }}>
-          ▾
-        </span>
+      <div className={styles.head}>
+        {headerContent ?? <span className={styles.headTitle}>{title}</span>}
+        <span className={`${styles.arrow} ${open ? styles['arrow--open'] : ''}`}>▾</span>
       </div>
-      <div style={{
-        display: 'grid',
-        gridTemplateRows: open ? '1fr' : '0fr',
-        transition: 'grid-template-rows 0.3s ease',
-      }}>
-        <div style={{ overflow: 'hidden' }}>
-          <div style={{ fontSize: 14, lineHeight: 1.8, paddingTop: '0.75rem' }}>
-            {children}
-          </div>
+      <div className={`${styles.body} ${open ? styles['body--open'] : ''}`}>
+        <div className={styles.bodyInner}>
+          <div className={styles.content}>{children}</div>
         </div>
       </div>
     </div>
   )
 }
 
-export function CollapsibleLatex({
-  content,
-  activeColor = 'var(--potc-theme-color)',
-  defaultOpen = false,
-  headerContent,
-}) {
-  const [open, setOpen] = useState(defaultOpen)
+export function CollapsiblePanel(props) {
+  return <Panel {...props} />
+}
 
+export function CollapsibleLatex({ content, title = '參考解法', ...rest }) {
   return (
-    <div
-      onClick={() => setOpen(!open)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={e => { if (e.key === 'Enter') setOpen(!open) }}
-      style={{
-        padding: '1.25rem 1.5rem',
-        borderRadius: 10,
-        border: open
-          ? `1px solid ${activeColor}`
-          : '1px solid var(--border)',
-        backgroundColor: open
-          ? `color-mix(in srgb, ${activeColor} 8%, transparent)`
-          : 'var(--bg-secondary)',
-        cursor: 'pointer',
-        transition: 'border-color 0.2s, background-color 0.2s',
-        outline: 'none',
-      }}
-    >
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.75rem',
-      }}>
-        {headerContent ? (
-          headerContent
-        ) : (
-          <span style={{
-            fontSize: 14,
-            fontWeight: 500,
-            color: open ? activeColor : 'var(--text-secondary)',
-            flex: 1,
-            transition: 'color 0.2s',
-          }}>
-            參考解法
-          </span>
-        )}
-        <span style={{
-          fontSize: 18,
-          color: 'var(--text-muted)',
-          transition: 'transform 0.25s, color 0.2s',
-          transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
-          ...(open && { color: activeColor }),
-        }}>
-          ▾
-        </span>
-      </div>
-      <div style={{
-        display: 'grid',
-        gridTemplateRows: open ? '1fr' : '0fr',
-        transition: 'grid-template-rows 0.3s ease',
-      }}>
-        <div style={{ overflow: 'hidden' }}>
-          <div
-            dangerouslySetInnerHTML={{ __html: renderLatex(content) }}
-            style={{ fontSize: 14, lineHeight: 1.8, paddingTop: '0.75rem' }}
-          />
-        </div>
-      </div>
-    </div>
+    <Panel title={title} {...rest}>
+      <div dangerouslySetInnerHTML={{ __html: renderLatex(content) }} />
+    </Panel>
   )
 }
