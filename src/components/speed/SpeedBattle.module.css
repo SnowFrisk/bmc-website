@@ -52,19 +52,7 @@
   padding: var(--space-2) var(--space-4);
 }
 
-/* ── Lobby rotating tips ── */
-.battle__tip {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin: var(--space-2) 0 0;
-  text-align: center;
-  animation: bmc-tip-in 0.45s ease;
-}
 
-@keyframes bmc-tip-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
 
 /* ── Question picker: difficulty | banks side by side ── */
 .battle__pickGrid {
@@ -216,6 +204,20 @@
   padding-left: 0.35em; /* compensate letter-spacing */
   color: var(--speedmath-theme-color, var(--blue));
   font-variant-numeric: tabular-nums;
+}
+
+/* Setup field (label + input) — used for the bank question-count option */
+.battle__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+  max-width: 260px;
+}
+
+.battle__fieldLabel {
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
 /* Inputs */
@@ -423,24 +425,22 @@
   white-space: nowrap;
 }
 
-/* ── Live LaTeX preview under the answer input ──
-   Helps the player verify syntax before submitting (e.g. \frac{1}{2}).
-   Fades out on submit — the verdict takes over showing the answer. */
-.battle__preview {
-  width: 100%;
-  max-width: 420px;
-  min-height: 2.25rem;
-  border: 1px dashed var(--border);
-  border-radius: 8px;
-  padding: var(--space-2) var(--space-3);
+/* ── Answer input row（LatexInput compact + submit button 並排）── */
+.battle__answerRow {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  transition: opacity 0.22s ease-out, transform 0.22s ease-out,
-    min-height 0.22s ease-out, padding 0.22s ease-out, margin 0.22s ease-out;
+  gap: var(--space-3);
+  align-items: flex-start;
+  width: 100%;
+  min-width: 0;
 }
 
+.battle__answerRow > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 提交後預覽 fade-out（class 透傳去 LatexInput 嘅 preview 上；
+   base 樣式由 LatexInput.module.css 提供，leaving 只做視覺收縮） */
 .battle__preview--leaving {
   opacity: 0;
   transform: translateY(-4px);
@@ -449,18 +449,6 @@
   padding-bottom: 0;
   margin: 0;
   border-color: transparent;
-}
-
-.battle__previewBody {
-  font-size: 18px;
-  color: var(--text-primary);
-  overflow-x: auto;
-  max-width: 100%;
-}
-
-.battle__previewHint {
-  font-size: 12px;
-  color: var(--text-muted);
 }
 
 /* ── Temporary leader (corner) ── */
@@ -664,7 +652,6 @@
 @media (min-width: 768px) {
   .battle__topBar,
   .battle__answerStage,
-  .battle__preview,
   .battle__scoreboard {
     width: min(68vw, 480px);
     max-width: none; /* lift the mobile 420px cap so the column follows vw */

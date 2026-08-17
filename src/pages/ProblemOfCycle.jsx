@@ -1,47 +1,14 @@
 import { useState, Fragment, useMemo, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import 'katex/dist/katex.min.css'
+import { useTranslation } from 'react-i18next'
 import { useCurrentProblems } from '../hooks/useSupabase'
 import { ProblemCard } from '../components/problem/ProblemCard'
 import SubmitForm from '../components/problem/SubmitForm'
-import Leaderboard from '../components/problem/Leaderboard'
 import { Skeleton } from '../components/ui/Skeleton'
+import EmptyState from '../components/ui/EmptyState'
 import { renderLatex } from '../lib/math-renderer'
 import styles from './ProblemOfCycle.module.css'
-
-// ── Static fallback — shown when Supabase is not yet configured ──
-const FALLBACK_GROUP = {
-  id: 'fallback-main',
-  cycle_number: 1,
-  title: '立方和公式',
-  latex: String.raw`對於任意正整數 $n$，證明：$\sum_{k=1}^{n} k^3 = \left( \frac{n(n+1)}{2} \right)^2$`,
-  steps: [
-    {
-      id: 'fallback-s1',
-      step_number: 1,
-      difficulty_level_id: 1,
-      title: '等差求和公式',
-      latex: String.raw`證明 $1 + 2 + \cdots + n = \frac{n(n+1)}{2}$。`,
-      difficulty_levels: { id: 1, label: 'Easy', points: 3 },
-    },
-    {
-      id: 'fallback-s2',
-      step_number: 2,
-      difficulty_level_id: 2,
-      title: '代入展開',
-      latex: String.raw`證明 $\sum_{k=1}^{n} k^3$ 可以寫成 $\left( \frac{n(n+1)}{2} \right)^2$ 嘅形式。`,
-      difficulty_levels: { id: 2, label: 'Medium', points: 5 },
-    },
-    {
-      id: 'fallback-s3',
-      step_number: 3,
-      difficulty_level_id: 3,
-      title: '歸納法收尾',
-      latex: String.raw`用數學歸納法完成證明。`,
-      difficulty_levels: { id: 3, label: 'Hard', points: 8 },
-    },
-  ],
-}
 
 function stepState(stepNumber, activeStep, completedSteps) {
   if (completedSteps.has(stepNumber)) return 'done'
@@ -176,14 +143,17 @@ function PageSkeleton() {
 // ── Page ─────────────────────────────────────────────────────
 
 export default function ProblemOfCycle() {
+  const { t } = useTranslation()
   const { data, isLoading, error } = useCurrentProblems()
   const isConfigured = import.meta.env.VITE_SUPABASE_URL &&
     !import.meta.env.VITE_SUPABASE_URL.includes('placeholder')
 
+  // 冇活躍題目（未配置 / 未有本週題）→ group = null → 顯示空狀態，唔再
+  // 用靜態示範數據
   const group = isConfigured && (data?.problems?.length ?? 0) > 0
     ? data.problems[0]
-    : FALLBACK_GROUP
-  const cycleNumber = isConfigured ? (data?.cycleNumber ?? 1) : FALLBACK_GROUP.cycle_number
+    : null
+  const cycleNumber = group?.cycle_number
   const steps = group?.steps ?? []
 
   // Legacy format (a single-tier row with no real steps) renders without
@@ -243,25 +213,39 @@ export default function ProblemOfCycle() {
     return <PageSkeleton />
   }
 
+  // 冇活躍題目 → 空狀態（同首頁通告 / 排行榜 / 過往題目共用 EmptyState）
+  if (!group) {
+    return (
+      <div className={styles.problemCycle__container}>
+        <section>
+          <div className={styles.problemCycle__header}>
+            <h1 className={styles.problemCycle__title}>{t('nav.problem')}</h1>
+          </div>
+          {error && (
+            <p style={{ fontSize: 12, color: 'var(--red)', margin: '0.25rem 0 0' }}>
+              {t('potc.loadError')}{error.message}
+            </p>
+          )}
+        </section>
+        <EmptyState icon="📅" title={t('potc.noActive')} hint={t('potc.noActiveHint')} />
+      </div>
+    )
+  }
+
   return (
     <div className={styles.problemCycle__container}>
 
       {/* Header */}
       <section>
         <div className={styles.problemCycle__header}>
-          <h1 className={styles.problemCycle__title}>每週一問</h1>
+          <h1 className={styles.problemCycle__title}>{t('nav.problem')}</h1>
           <span className={styles.problemCycle__cycleBadge}>
             Cycle {cycleNumber}
           </span>
         </div>
-        {!isConfigured && (
-          <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '0.25rem 0 0', fontStyle: 'italic' }}>
-            （目前顯示靜態示範數據 — 配置 Supabase 後將顯示真實題目）
-          </p>
-        )}
         {error && (
           <p style={{ fontSize: 12, color: 'var(--red)', margin: '0.25rem 0 0' }}>
-            無法載入題目：{error.message}
+            {t('potc.loadError')}{error.message}
           </p>
         )}
       </section>
@@ -275,15 +259,17 @@ export default function ProblemOfCycle() {
           className={`${styles.problemCycle__mainCard} ${pinned ? styles['problemCycle__mainCard--pinned'] : ''}`}
         >
           <div className={styles.problemCycle__mainRow}>
-            <span className={styles.problemCycle__mainBadge}>本週大題</span>
-            <h2 className={styles.problemCycle__mainTitle}>{group.title}</h2>
+            <span className={styles.problemCycle__mainBadge}>{t('potc.mainBadge')}</span>
+            <h2 className={styles.problemCycle__mainTitle}>
+              {group.title}
+            </h2>
             {pinned && (
               <button
                 type="button"
                 className={styles.problemCycle__mainToggle}
                 onClick={() => setMainExpanded(v => !v)}
                 aria-expanded={mainExpanded}
-                aria-label={mainExpanded ? '收起大題說明' : '展開大題說明'}
+                aria-label={mainExpanded ? t('potc.collapse') : t('potc.expand')}
               >
                 <span className={`${styles.problemCycle__mainChevron} ${mainExpanded ? styles['problemCycle__mainChevron--open'] : ''}`}>
                   ▾
@@ -302,7 +288,7 @@ export default function ProblemOfCycle() {
                 dangerouslySetInnerHTML={{ __html: mainLatex }}
               />
               <p className={styles.problemCycle__mainHint}>
-                {steps.length} 個小步驟，逐步逼近 · 揀一個步驟開始
+                {t('potc.mainHint', { count: steps.length })}
               </p>
             </div>
           </div>
@@ -346,7 +332,7 @@ export default function ProblemOfCycle() {
           and the answer input are always on screen together. */}
       <section>
         {isGroupFormat && (
-          <h2 className={styles.problemCycle__sectionTitle}>解題步驟</h2>
+          <h2 className={styles.problemCycle__sectionTitle}>{t('potc.stepsTitle')}</h2>
         )}
         <div
           key={activeProblem?.step_number ?? 'step'}
@@ -369,12 +355,6 @@ export default function ProblemOfCycle() {
           />
         </div>
       </section>
-
-      <Leaderboard
-        cycleNumber={cycleNumber}
-        problems={steps}
-        totalSteps={steps.length}
-      />
 
       {/* Link to past problems */}
       <section style={{ textAlign: 'center' }}>
@@ -404,7 +384,7 @@ export default function ProblemOfCycle() {
             e.currentTarget.style.gap = '0.5rem'
           }}
         >
-          瀏覽過往題目
+          {t('past.browse')}
           <span style={{ fontSize: 16 }}>→</span>
         </Link>
       </section>

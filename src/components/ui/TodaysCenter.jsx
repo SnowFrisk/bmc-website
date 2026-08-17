@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useTheme } from '../../hooks/useTheme'
+import { currentLanguage } from '../../i18n'
 import styles from './TodaysCenter.module.css'
 
 // ── catalogue of triangle centres ──
@@ -10,7 +12,7 @@ const CENTRES = [
     name: '重心',
     en: 'Centroid',
     symbol: 'G',
-    desc: '三條中線的交點，亦係三角形嘅質量中心。',
+    descKey: 'today.desc.centroid',
     draw: (ctx, A, B, C) => {
       const midAB = { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 }
       const midBC = { x: (B.x + C.x) / 2, y: (B.y + C.y) / 2 }
@@ -24,7 +26,7 @@ const CENTRES = [
     name: '垂心',
     en: 'Orthocenter',
     symbol: 'H',
-    desc: '三條高線的交點。',
+    descKey: 'today.desc.orthocenter',
     draw: (ctx, A, B, C) => {
       const footA = footOfPerp(A, B, C)
       drawDashedLine(ctx, A, footA)
@@ -39,7 +41,7 @@ const CENTRES = [
     name: '外心',
     en: 'Circumcenter',
     symbol: 'O',
-    desc: '三條垂直平分線的交點，外接圓嘅圓心。',
+    descKey: 'today.desc.circumcenter',
     draw: (ctx, A, B, C) => {
       const midAB = { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 }
       const pAB = perpVector(A, B)
@@ -64,7 +66,7 @@ const CENTRES = [
     name: '內心',
     en: 'Incenter',
     symbol: 'I',
-    desc: '三條角平分線的交點，內切圓嘅心。',
+    descKey: 'today.desc.incenter',
     draw: (ctx, A, B, C) => {
       const a = { x: B.x - A.x, y: B.y - A.y }
       const b = { x: C.x - A.x, y: C.y - A.y }
@@ -250,7 +252,10 @@ export default function TodaysCenter() {
     return () => window.cancelAnimationFrame(frame)
   }, [centre, triangleVersion, theme])
 
+  const { t } = useTranslation()
   if (!centre) return null
+
+  const name = currentLanguage() === 'zh' ? centre.name : centre.en
 
   return (
     <section className={styles.todaysCenter}>
@@ -258,7 +263,7 @@ export default function TodaysCenter() {
         <span className={styles.todaysCenter__symbol}>
           {centre.symbol}
         </span>
-        <span>{centre.name} / {centre.en}</span>
+        <span>{name}</span>
       </div>
 
       <div
@@ -279,12 +284,12 @@ export default function TodaysCenter() {
         </div>
 
         <div className={styles.todaysCenter__refreshHint}>
-          ↻ 換一個
+          ↻ {t('today.rotate')}
         </div>
       </div>
 
       <p className={styles.todaysCenter__desc}>
-        {centre.desc}
+        {t(centre.descKey)}
       </p>
     </section>
   )

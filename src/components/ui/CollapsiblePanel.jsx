@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { renderLatex } from '../../lib/math-renderer'
 import styles from './CollapsiblePanel.module.css'
 
@@ -31,9 +32,10 @@ export function CollapsiblePanel(props) {
   return <Panel {...props} />
 }
 
-export function CollapsibleLatex({ content, title = '參考解法', ...rest }) {
+export function CollapsibleLatex({ content, title, ...rest }) {
+  const { t } = useTranslation()
   return (
-    <Panel title={title} {...rest}>
+    <Panel title={title ?? t('common.solution')} {...rest}>
       <div dangerouslySetInnerHTML={{ __html: renderLatex(content) }} />
     </Panel>
   )

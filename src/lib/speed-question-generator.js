@@ -10,10 +10,11 @@ const LEVELS = {
 }
 
 // Difficulty metadata shared by the SoloMode and battle pickers
+// (desc 係 i18n key——UI 文案集中喺字典；title 本身係英文)
 export const DIFFICULTIES = [
-  { level: 1, icon: '🌱', title: 'Easy',   desc: '簡單加減，15 秒一題' },
-  { level: 2, icon: '⚡', title: 'Medium', desc: '四則混合，12 秒一題' },
-  { level: 3, icon: '🔥', title: 'Hard',   desc: '大數乘除，10 秒一題' },
+  { level: 1, icon: '🌱', title: 'Easy',   descKey: 'speed.diff.easy' },
+  { level: 2, icon: '⚡', title: 'Medium', descKey: 'speed.diff.medium' },
+  { level: 3, icon: '🔥', title: 'Hard',   descKey: 'speed.diff.hard' },
 ]
 
 function randInt(min, max) {

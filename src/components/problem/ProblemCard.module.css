@@ -61,6 +61,8 @@
   line-height: 1.8;
   padding-top: var(--space-3);
   white-space: pre-wrap; /* plain-text steps keep their line breaks */
+  /* 數學內容用襯線（同公式 serif 統一）——「數學內容 = serif、界面 = sans」 */
+  font-family: 'Noto Serif TC', 'Lora', Georgia, serif;
 }
 
 /* Unify KaTeX size: display and inline formulas both render at the

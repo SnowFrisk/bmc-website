@@ -1,0 +1,13 @@
+/* ── Lobby rotating tips ── */
+.battle__tip {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: var(--space-2) 0 0;
+  text-align: center;
+  animation: bmc-tip-in 0.45s ease;
+}
+
+@keyframes bmc-tip-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

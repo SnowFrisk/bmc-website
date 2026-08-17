@@ -1,4 +1,5 @@
 import { Component } from 'react'
+import i18n from '../../i18n'
 import btnStyles from './buttons.module.css'
 import styles from './ErrorBoundary.module.css'
 
@@ -20,13 +21,13 @@ export default class ErrorBoundary extends Component {
     if (this.state.hasError) {
       return (
         <div className={styles.container}>
-          <h1 className={styles.title}>發生錯誤</h1>
-          <p className={styles.message}>應用程式發生未預期的錯誤，請嘗試重新整理頁面。</p>
+          <h1 className={styles.title}>{i18n.t('error.title')}</h1>
+          <p className={styles.message}>{i18n.t('error.message')}</p>
           <button
             onClick={() => window.location.reload()}
             className={`${btnStyles.btnSecondary} ${styles.reloadBtn}`}
           >
-            重新整理
+            {i18n.t('error.reload')}
           </button>
           {this.state.error && (
             <pre className={styles.details}>

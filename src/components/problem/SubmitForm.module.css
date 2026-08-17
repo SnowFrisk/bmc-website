@@ -46,8 +46,9 @@
   color: var(--text-secondary);
 }
 
-.submitForm__input,
-.submitForm__textarea {
+/* 答案 textarea 已由 LatexInput 組件提供（compact multiline）；
+   submitForm__input 剩返姓名輸入用 */
+.submitForm__input {
   background-color: var(--bg-tertiary);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -58,24 +59,17 @@
   transition: border-color 0.2s, background-color 0.2s;
 }
 
-.submitForm__input:hover,
-.submitForm__textarea:hover {
+.submitForm__input:hover {
   border-color: color-mix(in srgb, var(--potc-theme-color) 45%, var(--border));
 }
 
-.submitForm__input:focus,
-.submitForm__textarea:focus {
+.submitForm__input:focus {
   outline: none;
   border-color: var(--potc-theme-color);
 }
 
 .submitForm__input:disabled {
   opacity: 0.55;
-}
-
-.submitForm__textarea {
-  resize: vertical;
-  line-height: 1.6;
 }
 
 .submitForm__anonRow {
@@ -146,4 +140,68 @@
 .submitForm__inline {
   border-top: none;
   border-radius: 0 0 10px 10px;
+}
+
+/* ── 提交成功 Code 卡 ──
+   提交完成後表格淡出（0.3s），Code 卡先淡入（delay 0.3s + both fill：
+   動畫開始前已隱藏）——「舊先走、新人」原則。 */
+.submitForm__fadeOut {
+  animation: submit-form-fade-out 0.3s ease forwards;
+}
+
+@keyframes submit-form-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.submitForm__codeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) 0 var(--space-2);
+  text-align: center;
+  animation: submit-code-in 0.45s ease 0.3s both;
+}
+
+@keyframes submit-code-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.submitForm__codeTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--green);
+  margin: 0;
+}
+
+/* 大字等寬 code；user-select: all 令撳一下就揀晒成個 code（方便直接複製） */
+.submitForm__code {
+  font-family: 'SF Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+  font-size: clamp(24px, 6vw, 32px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text-primary);
+  margin: var(--space-1) 0;
+  user-select: all;
+}
+
+.submitForm__codeActions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-1);
+}
+
+.submitForm__codeHint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: var(--space-2) 0 0;
 }

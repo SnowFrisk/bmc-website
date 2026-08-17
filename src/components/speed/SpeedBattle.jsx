@@ -1,40 +1,31 @@
 import { useState, useEffect, useRef } from 'react'
-import { flushSync } from 'react-dom'
-import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { startPanelTransition } from '../../lib/view-transitions'
 import { supabase } from '../../lib/supabase'
 import { fetchQuestionBanks } from '../../lib/speed-bank'
 import { DIFFICULTIES } from '../../lib/speed-question-generator'
 
-// Rotating gameplay tips shown in the lobby — players are idle there, so
-// it is a natural "teachable moment" for answer-format rules.
-const LOBBY_TIPS = [
-  '多個答案用分號分隔，例如：3; -3',
-  '答案支援 LaTeX，例如：\\frac{1}{2}',
-  '等價寫法都算啱：2 + \\sqrt{3} ≡ \\sqrt{3} + 2',
-  '答得越快，分數越高！',
-  '每人每題只有一次作答機會',
-  '答錯唔扣分，但會慢人一步',
-]
+
 
 // Simplest-form rules are only enforced when the bank has the "最簡"
 // toggle on — show these tips only for such banks, so players of a
 // random-speed-math room are not misled.
-const SIMPLEST_TIPS = [
-  '最簡形式：√4 要答 2，唔可以留 √4',
-  '分數要約分：2/4 要答 1/2',
-  '少於 1000 嘅冪要化簡：5^4 答 625；4^6 可以保留（≥1000）',
-]
-
-function LobbyTips({ simplest = false }) {
-  const tips = [...LOBBY_TIPS, ...(simplest ? SIMPLEST_TIPS : [])]
-  const [index, setIndex] = useState(0)
-  useEffect(() => {
-    const t = setInterval(() => setIndex(i => (i + 1) % tips.length), 5000)
-    return () => clearInterval(t)
-  }, [tips.length])
-  // key forces a re-mount per tip so the fade-in animation replays
-  return <p key={index} className={styles.battle__tip}>💡 {tips[index]}</p>
+// Bank deck: randomly sample N questions (count blank = all). Fisher-Yates
+// shuffle then slice, so even a full-bank deck gets a random ORDER — repeat
+// battles play differently.
+function sampleBankQuestions(bank, count) {
+  const qs = bank.questions.map(q => ({ ...q, simplest: bank.simplest === true }))
+  const total = qs.length
+  const n = String(count).trim() === ''
+    ? total
+    : Math.min(Math.max(1, Math.floor(Number(count)) || total), total)
+  for (let i = qs.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[qs[i], qs[j]] = [qs[j], qs[i]]
+  }
+  return qs.slice(0, n)
 }
+
 import {
   createRoom, startGame, nextQuestion, endGame,
   joinRoom, submitAnswer, judgeAnswer, fetchPlayers, fetchMyAnswers,
@@ -42,9 +33,12 @@ import {
 } from '../../hooks/useSpeedRoom'
 import Spinner from '../ui/Spinner'
 import BackButton from '../ui/BackButton'
+import LatexInput from '../ui/LatexInput'
 import btnStyles from '../ui/buttons.module.css'
 import styles from './SpeedBattle.module.css'
 import { renderLatex } from '../../lib/math-renderer'
+import { LOBBY_TIPS, SIMPLEST_TIPS } from '../../data/tips'
+import { LobbyTips } from '../ui/LobbyTips'
 
 // ══════════════ Unified battle game ══════════════
 // Fill-in-the-blank speed battle. Continuous flow: the host device
@@ -52,6 +46,7 @@ import { renderLatex } from '../../lib/math-renderer'
 // Answers are judged on the host device (the deck stays server-side /
 // host-side), so no client ever sees the answer before the review.
 export default function SpeedBattle({ onExit, initialRole = null, initialCode = '' }) {
+  const { t } = useTranslation()
   // initialRole/initialCode let a deep link (`/speed?mode=join&code=…`)
   // skip the role selection and land straight in the join form.
   const [role, setRole] = useState(initialRole)   // 'host' | 'join'
@@ -69,6 +64,10 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
   const [source, setSource] = useState('random') // 'random' | 'bank'
   const [banks, setBanks] = useState([])
   const [bankId, setBankId] = useState('')
+  // How many questions to randomly sample from the bank ('' = all).
+  const [bankCount, setBankCount] = useState('')
+  // Random-speed deck size (1–50, default 5).
+  const [questionCount, setQuestionCount] = useState('5')
   // Chosen difficulty for random speed math (picked on the 'level' phase)
   const [level, setLevel] = useState(2)
 
@@ -234,15 +233,15 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
   async function handleCreate() {
     try {
       setNotice(null)
-      // Source: prepared bank (deck = bank questions) or random speed math.
-      // simplest is a bank-level setting — stamp it onto each deck row so
-      // judgeAnswer picks it up without changing the room schema.
+      // Source: prepared bank (deck = random sample of bank questions) or
+      // random speed math. simplest is a bank-level setting — stamped onto
+      // each deck row so judgeAnswer picks it up without schema changes.
       const bank = source === 'bank' ? banks.find(b => b.id === Number(bankId)) : null
-      if (source === 'bank' && !bank) throw new Error('請揀一個題庫。')
-      const bankDeck = bank
-        ? bank.questions.map(q => ({ ...q, simplest: bank.simplest === true }))
-        : null
-      const { room: r, deck: d, hostPlayer: hp } = await createRoom(name, 5, level, bankDeck)
+      if (source === 'bank' && !bank) throw new Error(t('speed.error.pickBank'))
+      const bankDeck = bank ? sampleBankQuestions(bank, bankCount) : null
+      // Random source: deck size comes from the "共幾題" input (1–50, default 5)
+      const qCount = Math.min(50, Math.max(1, Math.floor(Number(questionCount)) || 5))
+      const { room: r, deck: d, hostPlayer: hp } = await createRoom(name, qCount, level, bankDeck)
       setRoom(r)
       setDeck(d)
       setPlayer(hp)
@@ -296,52 +295,27 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
   // Playing and review stay instant: animating every question advance
   // would be noisy. flushSync makes the swap land before the snapshot.
   function goToSetup(nextRole) {
-    const apply = () => flushSync(() => { setRole(nextRole); setPhase('setup') })
-    if (document.startViewTransition) {
-      document.startViewTransition(apply)
-    } else {
-      apply()
-    }
+    startPanelTransition(() => { setRole(nextRole); setPhase('setup') })
   }
 
   // Host flow: role → question picker (difficulty OR bank, same level) →
   // setup. Join goes straight to setup.
   function goToPick() {
-    const apply = () => flushSync(() => { setRole('host'); setPhase('pick') })
-    if (document.startViewTransition) {
-      document.startViewTransition(apply)
-    } else {
-      apply()
-    }
+    startPanelTransition(() => { setRole('host'); setPhase('pick') })
   }
 
   // Choosing a difficulty = random speed math; choosing a bank = its
   // prepared questions. Both land in setup, source decides the deck.
   function pickRandom(levelChoice) {
-    const apply = () => flushSync(() => { setLevel(levelChoice); setSource('random'); setPhase('setup') })
-    if (document.startViewTransition) {
-      document.startViewTransition(apply)
-    } else {
-      apply()
-    }
+    startPanelTransition(() => { setLevel(levelChoice); setSource('random'); setPhase('setup'); setQuestionCount('5') })
   }
 
   function pickBank(bankChoice) {
-    const apply = () => flushSync(() => { setBankId(String(bankChoice)); setSource('bank'); setPhase('setup') })
-    if (document.startViewTransition) {
-      document.startViewTransition(apply)
-    } else {
-      apply()
-    }
+    startPanelTransition(() => { setBankId(String(bankChoice)); setSource('bank'); setPhase('setup'); setBankCount('') })
   }
 
   function goToRole() {
-    const apply = () => flushSync(() => setPhase('role'))
-    if (document.startViewTransition) {
-      document.startViewTransition(apply)
-    } else {
-      apply()
-    }
+    startPanelTransition(() => setPhase('role'))
   }
 
   // ── Judge one answer row (host device only), broadcast verdict + score.
@@ -419,19 +393,19 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
   // Shared BackButton keeps position/style identical across all pages.
   const renderBack = () => {
     if (phase === 'pick') {
-      return <BackButton onClick={goToRole}>← 返回</BackButton>
+      return <BackButton onClick={goToRole}>{t('common.back')}</BackButton>
     }
     if (phase === 'setup') {
       // Host: back to the question picker (the step before setup — the
       // most likely reason to back out is a wrong question choice).
       // Join: back to the role selection (no picker step).
-      return <BackButton onClick={isHostDevice ? goToPick : goToRole}>← 返回</BackButton>
+      return <BackButton onClick={isHostDevice ? goToPick : goToRole}>{t('common.back')}</BackButton>
     }
     if (phase === 'review' || phase === 'lobby') {
-      return <BackButton onClick={resetAll}>← 返回</BackButton>
+      return <BackButton onClick={resetAll}>{t('common.back')}</BackButton>
     }
     if (phase === 'role' && onExit) {
-      return <BackButton onClick={onExit}>← 返回選單</BackButton>
+      return <BackButton onClick={onExit}>{t('common.backMenu')}</BackButton>
     }
     return null
   }
@@ -441,22 +415,22 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
     return (
       <div className={styles.battle}>
         {renderBack()}
-        <h2 className={styles.battle__title}>實時對戰</h2>
-        <p className={styles.battle__hint}>填空式速算比拼 —— 揀一個角色開始</p>
+        <h2 className={styles.battle__title}>{t('speed.battleMode')}</h2>
+        <p className={styles.battle__hint}>{t('speed.roleHint')}</p>
         <div className={styles.battle__modeRow}>
           <button className={styles.battle__modeCard} onClick={goToPick}
             style={{ '--btn-accent': 'var(--speedmath-theme-color)' }}>
             <span className={styles.battle__modeIcon}>🎛️</span>
-            <span className={styles.battle__modeTitle}>主持遊戲</span>
-            <span className={styles.battle__modeDesc}>建立房間，你會自動加入做玩家</span>
-            <span className={styles.battle__modeAction}>開始 →</span>
+            <span className={styles.battle__modeTitle}>{t('speed.host')}</span>
+            <span className={styles.battle__modeDesc}>{t('speed.hostDesc')}</span>
+            <span className={styles.battle__modeAction}>{t('speed.start')} →</span>
           </button>
           <button className={styles.battle__modeCard} onClick={() => goToSetup('join')}
             style={{ '--btn-accent': 'var(--speedmath-theme-color)' }}>
             <span className={styles.battle__modeIcon}>📲</span>
-            <span className={styles.battle__modeTitle}>加入遊戲</span>
-            <span className={styles.battle__modeDesc}>輸入房號，即時加入對戰</span>
-            <span className={styles.battle__modeAction}>加入 →</span>
+            <span className={styles.battle__modeTitle}>{t('speed.join')}</span>
+            <span className={styles.battle__modeDesc}>{t('speed.joinDesc')}</span>
+            <span className={styles.battle__modeAction}>{t('speed.joinAction')} →</span>
           </button>
         </div>
       </div>
@@ -471,13 +445,13 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
     return (
       <div className={styles.battle}>
         {renderBack()}
-        <h2 className={styles.battle__title}>揀題目</h2>
+        <h2 className={styles.battle__title}>{t('speed.pickQuestion')}</h2>
 
         {/* Difficulty and banks are SAME-level choices, shown side by
             side — no scrolling to reach the bank list. */}
         <div className={styles.battle__pickGrid}>
           <section className={styles.battle__pickCol}>
-            <p className={styles.battle__hint}>🎲 隨機速算</p>
+            <p className={styles.battle__hint}>🎲 {t('speed.randomSpeed')}</p>
             <div className={styles.battle__modeRow}>
               {DIFFICULTIES.map(d => (
                 <button
@@ -488,17 +462,17 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
                 >
                   <span className={styles.battle__modeIcon}>{d.icon}</span>
                   <span className={styles.battle__modeTitle}>{d.title}</span>
-                  <span className={styles.battle__modeDesc}>{d.desc}</span>
-                  <span className={styles.battle__modeAction}>開始 →</span>
+                  <span className={styles.battle__modeDesc}>{t(d.descKey)}</span>
+                  <span className={styles.battle__modeAction}>{t('speed.start')} →</span>
                 </button>
               ))}
             </div>
           </section>
 
           <section className={styles.battle__pickCol}>
-            <p className={styles.battle__hint}>📚 導入題庫</p>
+            <p className={styles.battle__hint}>📚 {t('speed.importBank')}</p>
             {banks.length === 0 ? (
-              <p className={styles.battle__hint}>未有題庫——先去題庫頁建立。</p>
+              <p className={styles.battle__hint}>{t('speed.noBanks')}</p>
             ) : (
               <div className={styles.battle__bankList}>
                 {banks.map(b => (
@@ -509,14 +483,14 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
                   >
                     <span className={styles.battle__bankName}>{b.name}</span>
                     <span className={styles.battle__bankMeta}>
-                      {(b.questions ?? []).length} 題{b.simplest ? ' · 最簡' : ''}
+                      {t('speed.bank.questions', { count: (b.questions ?? []).length })}
+                      {b.simplest ? ` · ${t('speed.bank.simplest')}` : ''}
                     </span>
-                    <span className={styles.battle__bankUse}>使用 →</span>
+                    <span className={styles.battle__bankUse}>{t('speed.bank.use')} →</span>
                   </button>
                 ))}
               </div>
             )}
-            <Link to="/bank" className={styles.battle__manageLink}>＋ 去題庫頁管理</Link>
           </section>
         </div>
       </div>
@@ -528,11 +502,11 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
     return (
       <div className={styles.battle}>
         {renderBack()}
-        <h2 className={styles.battle__title}>{isHostDevice ? '建立房間' : '加入對戰'}</h2>
+        <h2 className={styles.battle__title}>{isHostDevice ? t('speed.battle.createRoom') : t('speed.battle.joinRoom')}</h2>
         {!isHostDevice && (
           <input
             className={styles.battle__input}
-            placeholder="6 位房號"
+            placeholder={t('speed.codePlaceholder')}
             value={code}
             onChange={e => setCode(e.target.value)}
             maxLength={6}
@@ -540,17 +514,49 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
         )}
         <input
           className={styles.battle__input}
-          placeholder="你嘅名字（顯示喺排行榜）"
+          placeholder={t('speed.namePlaceholder')}
           value={name}
           onChange={e => setName(e.target.value)}
         />
+        {/* 隨機速算來源：揀共幾題（1–50）做 deck */}
+        {isHostDevice && source === 'random' && (
+          <label className={styles.battle__field}>
+            <span className={styles.battle__fieldLabel}>{t('speed.questionCount')}</span>
+            <input
+              type="number"
+              min="1"
+              max="50"
+              className={styles.battle__input}
+              value={questionCount}
+              onChange={e => setQuestionCount(e.target.value)}
+              placeholder="5"
+            />
+          </label>
+        )}
+        {/* 題庫來源：揀抽幾多題做 deck（留空 = 全部）——隨機抽樣，重玩次序有變化 */}
+        {isHostDevice && source === 'bank' && (
+          <label className={styles.battle__field}>
+            <span className={styles.battle__fieldLabel}>
+              {t('speed.bankCount', { count: (banks.find(b => b.id === Number(bankId))?.questions ?? []).length })}
+            </span>
+            <input
+              type="number"
+              min="1"
+              max={(banks.find(b => b.id === Number(bankId))?.questions ?? []).length}
+              className={styles.battle__input}
+              value={bankCount}
+              onChange={e => setBankCount(e.target.value)}
+              placeholder={t('speed.all')}
+            />
+          </label>
+        )}
         <button
           className={`${btnStyles.btnPrimary} ${styles.battle__cta}`}
           onClick={isHostDevice ? handleCreate : handleJoin}
           disabled={!name.trim() || (!isHostDevice && !code.trim())}
           style={{ '--btn-accent': 'var(--speedmath-theme-color)' }}
         >
-          {isHostDevice ? '建立房間' : '加入'}
+          {isHostDevice ? t('speed.battle.create') : t('speed.battle.join')}
         </button>
         {notice && <p className={styles.battle__error}>{notice.text}</p>}
       </div>
@@ -559,29 +565,32 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
 
   // ── Lobby ──
   if (phase === 'lobby') {
+    const lobbyTips = deck.some(q => q.simplest === true)
+      ? [...LOBBY_TIPS, ...SIMPLEST_TIPS]
+      : LOBBY_TIPS
     return (
       <div className={styles.battle}>
         {isHostDevice ? (
           <>
-            <h2 className={styles.battle__title}>等待玩家加入</h2>
+            <h2 className={styles.battle__title}>{t('speed.lobby.waiting')}</h2>
             <div className={styles.battle__code}>{room?.code}</div>
-            <p className={styles.battle__hint}>叫隊員輸入呢個 6 位數字入房</p>
+            <p className={styles.battle__hint}>{t('speed.lobby.shareHint')}</p>
             <button
               className={`${btnStyles.btnSecondary} ${styles.battle__copyBtn}`}
               onClick={copyJoinLink}
             >
-              {copied ? '✓ 連結已複製' : '🔗 複製入房連結'}
+              {copied ? t('speed.battle.linkCopied') : t('speed.battle.copyLink')}
             </button>
           </>
         ) : (
           <>
-            <h2 className={styles.battle__title}>已加入 {room?.code}</h2>
-            <p className={styles.battle__hint}>等主持開始遊戲…</p>
+            <h2 className={styles.battle__title}>{t('speed.lobby.joined', { code: room?.code })}</h2>
+            <p className={styles.battle__hint}>{t('speed.lobby.awaitHost')}</p>
           </>
         )}
         <div className={styles.battle__players}>
           {players.map(p => <span key={p.id} className={styles.battle__chip}>{p.name}</span>)}
-          {players.length === 0 && <span className={styles.battle__muted}>未有玩家加入…</span>}
+          {players.length === 0 && <span className={styles.battle__muted}>{t('speed.lobby.noPlayers')}</span>}
         </div>
         {isHostDevice && (
           <button
@@ -590,10 +599,10 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
             disabled={players.length === 0}
             style={{ '--btn-accent': 'var(--speedmath-theme-color)' }}
           >
-            開始遊戲（{deck.length} 題）
+            {t('speed.lobby.start', { count: deck.length })}
           </button>
         )}
-        <LobbyTips simplest={deck.some(q => q.simplest === true)} />
+        <LobbyTips tips={lobbyTips} />
       </div>
     )
   }
@@ -620,11 +629,11 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
     return (
       <div className={styles.battle}>
         {renderBack()}
-        <h2 className={styles.battle__title}>🏆 結果</h2>
+        <h2 className={styles.battle__title}>🏆 {t('speed.review.title')}</h2>
 
         {/* Personal summary — the most important info on this page */}
         <p className={styles.battle__summary}>
-          你答啱 {correctCount} / {deck.length} 題
+          {t('speed.review.summary', { correct: correctCount, total: deck.length })}
         </p>
 
         {/* Podium — vertical rows, medal for top 3, highlight self */}
@@ -636,14 +645,14 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
             >
               <span className={styles.battle__rank}>{MEDALS[i] ?? i + 1}</span>
               <span className={styles.battle__name}>
-                {p.name}{p.id === player?.id && '（你）'}
+                {p.name}{p.id === player?.id && `（${t('speed.battle.you')}）`}
               </span>
               <span className={styles.battle__pts}>{p.score} pts</span>
             </div>
           ))}
         </div>
 
-        <h3 className={styles.battle__reviewTitle}>逐題答案</h3>
+        <h3 className={styles.battle__reviewTitle}>{t('speed.review.perQuestion')}</h3>
 
         {/* Master–detail: question-number rail on the left, detail panel
             on the right. Rail dots carry state colour (green/red/neutral)
@@ -663,7 +672,7 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
                     i === reviewIndex ? styles['battle__reviewDot--active'] : ''
                   }`}
                   onClick={() => setReviewIndex(i)}
-                  aria-label={`第 ${i + 1} 題`}
+                  aria-label={t('speed.battle.qAria', { n: i + 1 })}
                   aria-current={i === reviewIndex ? 'true' : undefined}
                 >
                   {i + 1}
@@ -674,8 +683,10 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
 
           <div className={styles.battle__reviewDetail} key={reviewIndex}>
             <p className={styles.battle__reviewMeta}>
-              第 {reviewIndex + 1} 題 ·{' '}
-              {mine ? (mineCorrect ? '答啱' : '答錯') : '冇作答'}
+              {t('speed.review.qMeta', { n: reviewIndex + 1 })} ·{' '}
+              {mine
+                ? (mineCorrect ? t('speed.battle.answeredCorrect') : t('speed.battle.answeredWrong'))
+                : t('speed.battle.notAnswered')}
             </p>
             <div
               className={styles.battle__reviewQ}
@@ -683,19 +694,19 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
             />
             <div className={styles.battle__reviewRows}>
               <div className={styles.battle__reviewRow}>
-                <span>正確答案</span>
+                <span>{t('speed.review.correctAnswer')}</span>
                 <span
                   className={styles.battle__reviewAnswer}
                   dangerouslySetInnerHTML={{
                     // Multi-answer bank questions display as "3 或 -3"
                     __html: renderLatex(Array.isArray(curQ.answer)
-                      ? curQ.answer.join(' 或 ')
+                      ? curQ.answer.join(` ${t('speed.battle.or')} `)
                       : String(curQ.answer)),
                   }}
                 />
               </div>
               <div className={styles.battle__reviewRow}>
-                <span>你嘅答案</span>
+                <span>{t('speed.review.yourAnswer')}</span>
                 {mine ? (
                   <span
                     className={
@@ -706,13 +717,13 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
                     dangerouslySetInnerHTML={{ __html: renderLatex(String(mine.chosen_value)) }}
                   />
                 ) : (
-                  <span className={styles.battle__reviewMine}>冇作答</span>
+                  <span className={styles.battle__reviewMine}>{t('speed.battle.notAnswered')}</span>
                 )}
               </div>
               <div className={styles.battle__reviewRow}>
-                <span>全隊表現</span>
+                <span>{t('speed.review.team')}</span>
                 <span className={styles.battle__reviewStat}>
-                  {correctCountForQ}/{players.length} 答啱
+                  {t('speed.review.teamStat', { correct: correctCountForQ, total: players.length })}
                 </span>
               </div>
             </div>
@@ -729,10 +740,12 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
           wrapping on narrow phones */}
       <div className={styles.battle__topBar}>
         <div className={styles.battle__leader}>
-          {leader ? `🏆 暫時領先：${leader.name} ${leader.score}pts` : '等待作答…'}
+          {leader
+            ? t('speed.playing.leading', { name: leader.name, score: leader.score })
+            : t('speed.playing.waiting')}
         </div>
         <div className={styles.battle__qCount}>
-          第 {qIndex} / {deck.length} 題 · 已答 {answeredCount} / {players.length}
+          {t('speed.playing.progress', { q: qIndex, total: deck.length, answered: answeredCount, players: players.length })}
         </div>
       </div>
 
@@ -758,31 +771,34 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
               }`}
               onSubmit={e => { e.preventDefault(); handleSubmitAnswer() }}
             >
-              <input
-                type="text"
-                inputMode="text"
-                className={styles.battle__answerInput}
-                value={answerInput}
-                onChange={e => { setAnswerInput(e.target.value); if (notice) setNotice(null) }}
-                placeholder="輸入答案（多個答案用分號分隔，例如 3; -3；支援 LaTeX，例如 \frac{1}{2}）"
-                autoFocus
-                spellCheck={false}
-              />
-              <button
-                type="submit"
-                className={`${btnStyles.btnPrimary} ${styles.battle__cta}`}
-                disabled={!answerInput.trim()}
-                style={{ '--btn-accent': 'var(--speedmath-theme-color)' }}
-              >
-                提交
-              </button>
+              {/* 答案輸入 + 即時預覽（共用組件 compact；previewClass 保留
+                  提交後 fade-out——verdict 會接管顯示所答內容） */}
+              <div className={styles.battle__answerRow}>
+                <LatexInput
+                  variant="compact"
+                  value={answerInput}
+                  onChange={v => { setAnswerInput(v); if (notice) setNotice(null) }}
+                  placeholder={t('speed.playing.answerPlaceholder')}
+                  autoFocus
+                  splitAnswers
+                  previewClass={submitted ? styles['battle__preview--leaving'] : undefined}
+                />
+                <button
+                  type="submit"
+                  className={`${btnStyles.btnPrimary} ${styles.battle__cta}`}
+                  disabled={!answerInput.trim()}
+                  style={{ '--btn-accent': 'var(--speedmath-theme-color)' }}
+                >
+                  {t('speed.playing.submit')}
+                </button>
+              </div>
             </form>
             <div className={`${styles.battle__verdict} ${
               submitted ? styles['battle__verdict--in'] : ''
             }`}>
-              {myVerdict === true && '✅ 正確！'}
-              {myVerdict === false && '❌ 答錯'}
-              {myVerdict === null && <><Spinner /> 判斷中…</>}
+              {myVerdict === true && t('speed.correct')}
+              {myVerdict === false && t('speed.wrong')}
+              {myVerdict === null && <><Spinner /> {t('speed.playing.judging')}</>}
               {myVerdict !== null && (
                 <span
                   className={styles.battle__verdictAnswer}
@@ -790,27 +806,12 @@ export default function SpeedBattle({ onExit, initialRole = null, initialCode = 
                 />
               )}
               {showTransition && (
-                <span className={styles.battle__nextHint}>下一題準備中…</span>
+                <span className={styles.battle__nextHint}>{t('speed.playing.next')}</span>
               )}
             </div>
           </div>
 
-          {/* Live LaTeX preview under the input — fades out on submit,
-              the verdict takes over showing what you answered. */}
-          <div className={`${styles.battle__preview} ${
-            submitted ? styles['battle__preview--leaving'] : ''
-          }`}>
-            {answerInput.trim() ? (
-              <div
-                className={styles.battle__previewBody}
-                dangerouslySetInnerHTML={{ __html: renderLatex(answerInput.trim()) }}
-              />
-            ) : (
-              <span className={styles.battle__previewHint}>
-                輸入 LaTeX（例如 \frac{1}{2}）即時預覽
-              </span>
-            )}
-          </div>
+
 
           {notice && <p className={styles.battle__error}>{notice.text}</p>}
         </>

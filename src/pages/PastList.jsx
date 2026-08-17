@@ -1,51 +1,32 @@
 import { Link } from 'react-router-dom'
 import 'katex/dist/katex.min.css'
+import { useTranslation } from 'react-i18next'
+import i18n from '../i18n'
 import { usePastProblems } from '../hooks/useSupabase'
 import { BackLink } from '../components/ui/BackLink'
+import EmptyState from '../components/ui/EmptyState'
 import styles from './PastList.module.css'
 
-// Static fallback when Supabase isn't configured
-const FALLBACK_ARCHIVE = [
-  {
-    id: 0,
-    cycle_number: 0,
-    title: '調和數列的發散性',
-    difficulty_level_id: 3,
-    difficulty_levels: { label: 'Hard' },
-    created_at: '2026-05-01',
-  },
-  {
-    id: -1,
-    cycle_number: -1,
-    title: '費馬小定理',
-    difficulty_level_id: 2,
-    difficulty_levels: { label: 'Medium' },
-    created_at: '2026-04-01',
-  },
-]
-
 export default function PastList() {
+  const { t } = useTranslation()
   const { data: archive = [], isLoading, error } = usePastProblems()
 
   const isConfigured = import.meta.env.VITE_SUPABASE_URL &&
     !import.meta.env.VITE_SUPABASE_URL.includes('placeholder')
-  const items = isConfigured && archive.length > 0 ? archive : FALLBACK_ARCHIVE
+  // 冇過往題目（未配置 / 真係未有）→ 空狀態，唔再顯示靜態示範數據
+  const items = isConfigured ? archive : []
+  const locale = i18n.language?.startsWith('zh') ? 'zh-TW' : 'en-US'
 
   return (
     <div className={styles.pastList__container}>
 
       {/* Header */}
       <section>
-        <BackLink to="/problem">返回每週一問</BackLink>
-        <h1 className={styles.pastList__header}>過往題目</h1>
-        {!isConfigured && (
-          <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: '0.25rem 0 0', fontStyle: 'italic' }}>
-            （目前顯示靜態示範數據 — 配置 Supabase 後將顯示真實題目）
-          </p>
-        )}
+        <BackLink to="/problem">{t('past.backToProblem')}</BackLink>
+        <h1 className={styles.pastList__header}>{t('past.title')}</h1>
         {error && (
           <p style={{ fontSize: 12, color: 'var(--red)', margin: '0.25rem 0 0' }}>
-            無法載入：{error.message}
+            {t('past.loadError')}{error.message}
           </p>
         )}
       </section>
@@ -68,11 +49,11 @@ export default function PastList() {
             ? items.map(item => {
               const stepCount = item.steps?.length ?? 1
               const dateStr = item.start_date
-                ? new Date(item.start_date).toLocaleDateString('zh-TW', {
+                ? new Date(item.start_date).toLocaleDateString(locale, {
                     year: 'numeric', month: '2-digit', day: '2-digit',
                   })
                 : item.created_at
-                  ? new Date(item.created_at).toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit' })
+                  ? new Date(item.created_at).toLocaleDateString(locale, { year: 'numeric', month: '2-digit' })
                   : `Cycle ${item.cycle_number}`
 
               return (
@@ -99,7 +80,7 @@ export default function PastList() {
                     color: 'var(--text-muted)',
                     border: '1px solid var(--border)',
                   }}>
-                    {stepCount} 步
+                    {t('past.steps', { count: stepCount })}
                   </span>
 
                   {/* Date */}
@@ -112,12 +93,7 @@ export default function PastList() {
               )
             })
             : (
-              <p style={{
-                fontSize: 14, color: 'var(--text-muted)',
-                textAlign: 'center', padding: '2rem',
-              }}>
-                尚無過往題目。
-              </p>
+              <EmptyState icon="🗂" title={t('past.empty')} />
             )
         }
       </div>

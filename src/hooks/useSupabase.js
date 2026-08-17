@@ -66,7 +66,7 @@ async function fetchPastProblems() {
   return attachSteps(mains, steps)
 }
 
-async function fetchPastProblemById(problemId) {
+export async function fetchPastProblemById(problemId) {
   const { data: main, error } = await supabase
     .from('problems')
     .select('*, difficulty_levels(*)')

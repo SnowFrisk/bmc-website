@@ -1,0 +1,231 @@
+/* ── LatexInput（LaTeX 輸入 + 即時預覽，全站共用）── */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.label {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* full 版 textarea：LaTeX 代碼用等距字體（Overleaf 模式）——{} 嵌套對齊易睇 */
+.input {
+  width: 100%;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: 'SF Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+  line-height: 1.6;
+  padding: var(--space-2) var(--space-3);
+  resize: vertical;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.input:hover {
+  border-color: color-mix(in srgb, var(--potc-theme-color) 45%, var(--border));
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--potc-theme-color);
+}
+
+.previewWrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* toolbar：左「預覽」標籤、右「全屏」button */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toolbarLabel {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.expand {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--potc-theme-color);
+  cursor: pointer;
+}
+
+.expand:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── LatexPreview 內核 ──
+   opacity/transform transition 供「提交後 fade-out」（previewClass）平滑過渡 */
+.preview {
+  min-height: 3.2rem;
+  max-height: 300px;
+  overflow: auto;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  background-color: var(--bg-secondary);
+  padding: var(--space-2) var(--space-3);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  transition: opacity 0.22s ease-out, transform 0.22s ease-out;
+}
+
+/* 文本模式保留換行；數學內容用襯線（同公式 serif 統一）——
+   「數學內容 = serif、界面 = sans」語義分層 */
+.previewBody {
+  white-space: pre-wrap;
+  font-family: 'Noto Serif TC', 'Lora', Georgia, serif;
+}
+
+/* KaTeX display 公式唔會換行——喺公式層面做橫向 scroll */
+.previewBody :global(.katex-display) {
+  margin: var(--space-1) 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.1rem 0;
+}
+
+/* 多解分行（splitAnswers）：每個答案獨立一行 */
+.previewLine + .previewLine {
+  margin-top: 0.15rem;
+}
+
+.placeholder {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ── compact 版：單行輸入，預覽收細 ── */
+.compact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.compact__input {
+  width: 100%;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: 'SF Mono', ui-monospace, 'Cascadia Mono', Menlo, Consolas, monospace;
+  padding: var(--space-2) var(--space-3);
+  resize: vertical; /* multiline（textarea）用 */
+  transition: border-color 0.2s;
+}
+
+.compact__input:hover {
+  border-color: color-mix(in srgb, var(--potc-theme-color) 45%, var(--border));
+}
+
+.compact__input:focus {
+  outline: none;
+  border-color: var(--potc-theme-color);
+}
+
+/* 即時驗證失敗（QuestionBank live-validate） */
+.compact__input--invalid,
+.compact__input--invalid:hover,
+.compact__input--invalid:focus {
+  border-color: var(--red);
+}
+
+.compact .preview {
+  min-height: 2.2rem;
+  max-height: 160px;
+}
+
+/* ── 全屏 overlay ──
+   開：fade-in（latex-modal-in）；關：closing state 加 modal--closing →
+   fade-out 播完先 unmount（同 LatexInput.jsx 嘅 MODAL_ANIM_MS 同步）。
+   backdrop blur（8px，靜態 backdrop 下開銷可控）+ 均勻遮罩。
+   註：backdrop-filter 唔支援「漸變 blur 強度」（CSS 限制）。 */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background-color: rgb(0 0 0 / 40%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  animation: latex-modal-in 0.25s ease;
+}
+
+.modal--closing {
+  animation: latex-modal-out 0.25s ease forwards;
+}
+
+.modalCard {
+  width: 100%;
+  max-width: 860px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: var(--space-4);
+}
+
+.modalBody {
+  overflow: auto;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-primary);
+  font-family: 'Noto Serif TC', 'Lora', Georgia, serif;
+}
+
+.modalBody :global(.katex-display) {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: var(--space-2) 0;
+}
+
+@keyframes latex-modal-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes latex-modal-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal {
+    animation: none;
+  }
+
+  .modal--closing {
+    animation: none;
+  }
+}

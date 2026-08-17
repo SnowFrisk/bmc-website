@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import i18n from '../i18n'
 import { supabase } from '../lib/supabase'
 import { generateQuestionBatch } from '../lib/speed-question-generator'
 import { answersMatch, answersMatchAll } from '../lib/answer-match'
@@ -16,13 +17,13 @@ function makeCode() {
 export function friendlyAnswerError(error) {
   const msg = error?.message ?? String(error)
   if (/invalid input syntax for type (integer|int)/i.test(msg)) {
-    return '答案格式唔啱——需要數字或 LaTeX（例如 \\frac{1}{2}）。答案未送出，可以再試。'
+    return i18n.t('speed.error.answerFormat')
   }
   if (/Failed to fetch|NetworkError|network|ECONN/i.test(msg)) {
-    return '網絡唔穩定，答案未送出——請再試一次。'
+    return i18n.t('speed.error.network')
   }
   if (/duplicate|23505/i.test(msg)) {
-    return '呢題你已經提交過喇。'
+    return i18n.t('speed.error.duplicate')
   }
   return msg
 }
@@ -46,7 +47,7 @@ export async function createRoom(hostName, questionCount = 10, level = 2, bankQu
 
   const { data: hostPlayer, error: pErr } = await supabase
     .from('speed_players')
-    .insert({ room_id: data.id, name: hostName || '主持' })
+    .insert({ room_id: data.id, name: hostName || i18n.t('speed.hostDefault') })
     .select()
     .single()
   if (pErr) throw new Error(pErr.message)
@@ -89,8 +90,8 @@ export async function joinRoom(code, name) {
     .eq('code', code)
     .maybeSingle()
   if (roomError) throw new Error(roomError.message)
-  if (!room) throw new Error('找不到呢個房間。')
-  if (room.status === 'ended') throw new Error('呢個房間已經結束。')
+  if (!room) throw new Error(i18n.t('speed.error.roomNotFound'))
+  if (room.status === 'ended') throw new Error(i18n.t('speed.error.roomEnded'))
 
   const { data: player, error: playerError } = await supabase
     .from('speed_players')

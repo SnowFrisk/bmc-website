@@ -39,9 +39,8 @@
   transition: border-color 0.2s;
 }
 
-.input--invalid {
-  border-color: var(--red);
-}
+/* LaTeX 輸入已統一由 LatexInput 組件提供（mono + 即時預覽）；
+   題庫名等純文字 input 繼續用 .input 原樣式 */
 
 .input--invalid:focus {
   border-color: var(--red);
@@ -127,7 +126,13 @@
 .qRow__meta {
   display: flex;
   gap: var(--space-2);
-  align-items: center;
+  align-items: flex-start; /* 答案欄有預覽（較高），時間/刪除對齊頂部 */
+}
+
+/* 答案輸入 + 預覽佔 meta 行剩餘空間 */
+.qRow__answerWrap {
+  flex: 1;
+  min-width: 0;
 }
 
 .timeInput {

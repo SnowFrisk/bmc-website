@@ -29,6 +29,27 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;')
 }
 
+// 文本模式支援嘅 LaTeX text commands（有限子集）：\textbf → bold、
+// \textit/\emph → italic。其餘 command 保持字面（escape 咗）。
+const TEXT_COMMAND_RULES = [
+  [/\\textbf\{([^}]*)\}/g, '<strong>$1</strong>'],
+  [/\\textit\{([^}]*)\}/g, '<em>$1</em>'],
+  [/\\emph\{([^}]*)\}/g, '<em>$1</em>'],
+]
+
+function renderPlainText(content) {
+  let html = escapeHtml(content)
+  for (const [re, tag] of TEXT_COMMAND_RULES) {
+    html = html.replace(re, tag)
+  }
+  return html
+}
+
+// 冇 $ 分隔時，點判斷係咪 legacy raw LaTeX（舊數據）？
+// 用「math 命令特徵」而唔係「有冇 backslash」——普通文本夾雜
+// \textbf 等 text command 應該行文本模式，唔可以成段當 display math。
+const MATH_COMMAND_RE = /\\(frac|sqrt|int|sum|prod|lim|log|ln|sin|cos|tan|begin|end|left|right|cdot|times|div|pm|infty|pi|alpha|beta|gamma|delta|theta|lambda|leq|geq|neq|approx|rightarrow|to)\b/
+
 function renderInlineSegment(text) {
   const parts = text.split(/(\$[^$]+\$)/g)
 
@@ -45,7 +66,7 @@ function renderInlineSegment(text) {
           return `<span style="color:var(--text-muted)">${escapeHtml(formula)}</span>`
         }
       }
-      return escapeHtml(part)
+      return renderPlainText(part) // 文本段：escape + \textbf 等 text commands
     })
     .join('')
 }
@@ -58,10 +79,9 @@ export function renderLatex(content) {
     const hasInlineDollar = /(?<!\$)\$(?!\$)[^$]+\$(?!\$)/.test(content)
 
     if (!hasDisplayDollar && !hasInlineDollar) {
-      // Contains backslashes → legacy raw LaTeX (old data), render as display.
-      // Otherwise it's plain text — escape it instead of forcing KaTeX,
-      // so plain-text steps render at the same size as everything else.
-      if (content.includes('\\')) {
+      // 冇 $ 分隔：有 math 命令特徵先當 legacy raw LaTeX（舊數據）成段 display；
+      // 否則係普通文本（可能夾雜 \textbf 等 text commands）→ 文本模式。
+      if (MATH_COMMAND_RE.test(content)) {
         try {
           return katex.renderToString(content, {
             throwOnError: true,
@@ -71,7 +91,7 @@ export function renderLatex(content) {
           return '<span style="color:var(--text-muted)">(formula error)</span>'
         }
       }
-      return escapeHtml(content)
+      return renderPlainText(content)
     }
 
     // Step 1: split by $$...$$ display blocks

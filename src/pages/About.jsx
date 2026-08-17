@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { TOURNAMENTS, PROGRAMS } from '../data/about'
 import styles from './About.module.css'
 
@@ -9,11 +10,12 @@ import styles from './About.module.css'
 // elements stay sans-serif via the shared system.
 
 function AccordionItem({ item, open, onToggle }) {
+  const { t } = useTranslation()
   return (
     <li className={`${styles.item} ${open ? styles['item--open'] : ''}`}>
       <button className={styles.itemHead} onClick={onToggle} type="button" aria-expanded={open}>
         <h3 className={styles.itemName}>{item.name}</h3>
-        <span className={styles.itemWhen}>{item.when}</span>
+        <span className={styles.itemWhen}>{t(item.when)}</span>
         <span className={`${styles.itemArrow} ${open ? styles['itemArrow--open'] : ''}`}>▸</span>
       </button>
       {/* Always mounted: the body animates height via grid-template-rows
@@ -26,7 +28,7 @@ function AccordionItem({ item, open, onToggle }) {
               <div className={styles.itemLinks}>
                 {item.links.map(l => (
                   <a key={l.url} href={l.url} target="_blank" rel="noreferrer" className={styles.itemLink}>
-                    {l.label} ↗
+                    {t(l.label)} ↗
                   </a>
                 ))}
               </div>
@@ -39,29 +41,29 @@ function AccordionItem({ item, open, onToggle }) {
 }
 
 export default function About() {
+  const { t } = useTranslation()
   const [openId, setOpenId] = useState(null)
   const toggle = id => setOpenId(prev => (prev === id ? null : id))
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>關於我們</h1>
+      <h1 className={styles.title}>{t('about.title')}</h1>
       <p className={styles.lead}>
-        Bishop's Math Club（BMC）——一群鍾意數學嘅人：有比賽、有訓練、有得玩。
-        我哋參加年度賽事，亦自己搞活動。下面係逐學年嘅編年史。
+        {t('about.lead')}
       </p>
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Tournaments</h2>
         <p className={styles.sectionHint}>
-          按學年排序嘅年度賽事列表——撳卡片睇詳細同官方連結。
+          {t('about.tournamentsHint')}
         </p>
         <ul className={styles.list}>
-          {TOURNAMENTS.map(t => (
+          {TOURNAMENTS.map(t2 => (
             <AccordionItem
-              key={`t-${t.name}`}
-              item={t}
-              open={openId === `t-${t.name}`}
-              onToggle={() => toggle(`t-${t.name}`)}
+              key={`t-${t2.name}`}
+              item={t2}
+              open={openId === `t-${t2.name}`}
+              onToggle={() => toggle(`t-${t2.name}`)}
             />
           ))}
         </ul>
@@ -70,7 +72,7 @@ export default function About() {
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Internal Programs</h2>
         <p className={styles.sectionHint}>
-          BMC 自己組織嘅活動——一樣按學年排序。
+          {t('about.programsHint')}
         </p>
         <ul className={styles.list}>
           {PROGRAMS.map(p => (

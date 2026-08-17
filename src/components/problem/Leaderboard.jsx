@@ -1,5 +1,7 @@
+import { useTranslation } from 'react-i18next'
 import { useLeaderboard } from '../../hooks/useSubmissions'
 import { Skeleton } from '../ui/Skeleton'
+import EmptyState from '../ui/EmptyState'
 import styles from './Leaderboard.module.css'
 
 const MEDALS = { 1: '🥇', 2: '🥈', 3: '🥉' }
@@ -12,14 +14,15 @@ const MEDALS = { 1: '🥇', 2: '🥈', 3: '🥉' }
  *  - totalSteps: number of steps in the cycle (for x/N completion)
  */
 export default function Leaderboard({ cycleNumber, problems, totalSteps }) {
+  const { t } = useTranslation()
   const { data = [], isLoading, error } = useLeaderboard(cycleNumber, problems)
 
   if (error) {
     return (
       <section className={styles.leaderboard}>
-        <h2 className={styles.leaderboard__heading}>本週排行榜</h2>
+        <h2 className={styles.leaderboard__heading}>{t('leaderboard.title')}</h2>
         <p className={styles.leaderboard__empty} style={{ color: 'var(--red)' }}>
-          無法載入排行榜：{error.message}
+          {t('leaderboard.loadError')}{error.message}
         </p>
       </section>
     )
@@ -28,7 +31,7 @@ export default function Leaderboard({ cycleNumber, problems, totalSteps }) {
   if (isLoading) {
     return (
       <section className={styles.leaderboard}>
-        <h2 className={styles.leaderboard__heading}>本週排行榜</h2>
+        <h2 className={styles.leaderboard__heading}>{t('leaderboard.title')}</h2>
         <div className={styles.leaderboard__list}>
           {[0, 1, 2].map(i => (
             <div key={i} className={styles.leaderboard__skeletonRow}>
@@ -46,12 +49,10 @@ export default function Leaderboard({ cycleNumber, problems, totalSteps }) {
 
   return (
     <section className={styles.leaderboard}>
-      <h2 className={styles.leaderboard__heading}>本週排行榜</h2>
+      <h2 className={styles.leaderboard__heading}>{t('leaderboard.title')}</h2>
 
       {showEmptyState ? (
-        <p className={styles.leaderboard__empty}>
-          暫冇人上榜 — 提交正確答案成為第一個上榜者！
-        </p>
+        <EmptyState icon="🏆" title={t('leaderboard.empty')} />
       ) : (
         <div className={styles.leaderboard__list}>
           {data.slice(0, 5).map((entry, i) => (
@@ -62,11 +63,11 @@ export default function Leaderboard({ cycleNumber, problems, totalSteps }) {
               <span className={styles.leaderboard__name}>
                 {entry.name}
                 {entry.name === '匿名' && (
-                  <span className={styles.leaderboard__anonTag}>隱藏</span>
+                  <span className={styles.leaderboard__anonTag}>{t('leaderboard.hidden')}</span>
                 )}
               </span>
               <span className={styles.leaderboard__solved}>
-                {entry.solved}/{totalSteps} 步
+                {t('leaderboard.steps', { count: entry.solved, total: totalSteps })}
               </span>
               <span className={styles.leaderboard__score}>
                 {entry.score} pts
@@ -77,7 +78,7 @@ export default function Leaderboard({ cycleNumber, problems, totalSteps }) {
       )}
 
       <p className={styles.leaderboard__footnote}>
-        只統計正確提交 · 完成度 = 答啱幾多步 · 匿名提交合併顯示
+        {t('leaderboard.footnote')}
       </p>
     </section>
   )

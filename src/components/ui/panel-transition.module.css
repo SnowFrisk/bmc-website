@@ -1,0 +1,52 @@
+/* ── 全站「面板切換」View Transition（共用）──
+   用法：切換嘅面板容器 class 加
+     composes: panel [entrance] from '../components/ui/panel-transition.module.css'
+   - .panel：指定 view-transition-name = page-panel（全站統一——同一時間
+     只會 mount 一個頁面，唔會撞名；navbar/footer 喺 container 外唔受影響）
+   - .entrance：冇 View Transition 嘅瀏覽器（Firefox）fallback——mount 時
+     照播 panel-in；有 VT 時由 @supports 停用（避免同 snapshot 動畫重疊）
+  動畫契約（設計系統）：
+   - 舊面板即時消失（duration 0——crossfade 會令舊 snapshot 同新面板
+     重疊，睇落好似「閃返上一頁」）
+   - 新面板 0.45s 上升淡入（bmc-panel-in）
+   - root（navbar/footer/背景）兩邊一樣——直接 snap，唔 crossfade */
+
+.panel {
+  view-transition-name: page-panel;
+}
+
+::view-transition-old(page-panel) {
+  animation-duration: 0s;
+}
+
+::view-transition-new(page-panel) {
+  animation: bmc-panel-in 0.45s ease;
+}
+
+@keyframes bmc-panel-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+.entrance {
+  animation: bmc-panel-in 0.45s ease;
+}
+
+@supports (view-transition-name: none) {
+  .entrance {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(page-panel),
+  ::view-transition-new(page-panel),
+  .entrance {
+    animation: none;
+  }
+}

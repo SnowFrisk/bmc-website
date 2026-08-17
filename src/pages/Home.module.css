@@ -36,7 +36,6 @@
   flex-direction: column;
   gap: var(--space-3);
 }
-
 .home__annTitle {
   font-size: 18px;
   font-weight: 600;

@@ -1,62 +1,16 @@
 /* ── Speed Math page ── */
 
 /* Scope the mode-switch View Transition to this panel only, so the
-   Navbar/Footer stay put while the menu and game panels crossfade. */
+   Navbar/Footer stay put while the menu and game panels crossfade.
+   ／動畫規則（::view-transition、keyframes、entrance fallback、
+   reduced-motion）由共用 panel-transition.module.css 提供（全站統一
+   view-transition-name: page-panel）。 */
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-5);
-  view-transition-name: speedmath-panel;
-}
-
-/* Mode switch (menu ↔ solo ↔ battle): the OLD panel disappears
-   instantly (no fade-out — a crossfade overlaps the outgoing snapshot
-   with the incoming panel, which reads as a "flash" of the previous
-   page), and the NEW panel rises in over 0.25s. */
-::view-transition-old(speedmath-panel) {
-  animation-duration: 0s;
-}
-
-::view-transition-new(speedmath-panel) {
-  animation: bmc-panel-in 0.45s ease;
-}
-
-@keyframes bmc-panel-in {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-::view-transition-new(speedmath-panel) {
-  animation: bmc-panel-in 0.45s ease;
-}
-
-/* The root layer (navbar/footer/background) is identical on both sides of
-   the switch — crossfading it adds nothing but a possible flicker when
-   the viewport (e.g. scrollbar) differs. Snap it instantly instead. */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-}
-
-/* Entrance fallback for browsers without View Transitions (Firefox):
-   the mounted panel still plays the same rise-in animation. */
-.menu {
-  animation: bmc-panel-in 0.45s ease;
-}
-
-.solo {
-  animation: bmc-panel-in 0.45s ease;
-}
-
-/* Browsers WITH View Transitions must NOT play these element-level
-   animations on top of the snapshot animation — the two would race and
-   the panel visibly "flashes" the previous page as they drift apart. */
-@supports (view-transition-name: none) {
-  .menu,
-  .solo {
-    animation: none;
-  }
+  composes: panel from '../components/ui/panel-transition.module.css';
 }
 
 /* Answering-screen HUD row: difficulty | timer | stats (no page title) */
@@ -82,7 +36,10 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-4);
-  padding: 2.5rem 0;
+  padding: var(--space-5) var(--space-5);
+  width: 100%;
+  /* Firefox（冇 View Transition）fallback：mount 時照播 panel-in */
+  composes: entrance from '../components/ui/panel-transition.module.css';
 }
 
 .menu__hint {
@@ -98,7 +55,22 @@
   /* auto-fit: 2 cards on the mode menu, 3 on the difficulty picker */
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: var(--space-3);
-  width: 100%;
+}
+
+.menu__back {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-3);
+  border-radius: 100px;
+  transition: color 0.15s;
+}
+
+.menu__back:hover {
+  color: var(--speedmath-theme-color, var(--blue));
 }
 
 /* Selectable mode card — fills the layout so the entry isn't a bare
@@ -168,6 +140,8 @@
   /* Give the question stage real height so the question is centred and
      the answer input sits at the bottom. */
   min-height: min(55vh, 400px);
+  /* Firefox fallback：mount 時照播 panel-in */
+  composes: entrance from '../components/ui/panel-transition.module.css';
 }
 
 /* Question stage: the question owns the centre of the panel */
@@ -219,17 +193,17 @@
   color: var(--text-muted);
 }
 
-.solo__timer {
-  /* Lives in the HUD row next to the title: compact, muted — only turns
-     loud (red pulse) in the last seconds as a warning signal. */
-  font-size: clamp(20px, 4vw, 28px);
+/* Round clock — the headline timer (player-chosen minutes). Lives in the
+   HUD row; turns loud (red pulse) in the final seconds as a warning. */
+.solo__round {
+  font-size: clamp(24px, 5vw, 34px);
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--speedmath-theme-color, var(--blue));
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 
-.solo__timer--danger {
+.solo__round--danger {
   color: var(--red);
   animation: bmc-timer-pulse 1.5s ease-in-out infinite;
 }
@@ -301,19 +275,55 @@
   min-height: 44px;
 }
 
-.solo__timeUp {
+/* ── Round results ── */
+.solo__results {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-2);
   padding: var(--space-5) 0;
+  text-align: center;
 }
 
-.solo__timeUp p {
+.solo__resultsTitle {
   font-size: 18px;
   font-weight: 500;
   color: var(--text-secondary);
   margin: 0;
+}
+
+.solo__resultsScore {
+  font-size: clamp(44px, 10vw, 60px);
+  font-weight: 600;
+  color: var(--speedmath-theme-color, var(--blue));
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  margin: var(--space-2) 0;
+}
+
+.solo__resultsStats {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.solo__resultsBest {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.solo__resultsBest--new {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.solo__resultsActions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 /* ── Breakpoints ──
@@ -324,14 +334,5 @@
   .solo {
     width: min(68vw, 440px);
     max-width: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(speedmath-panel),
-  ::view-transition-new(speedmath-panel),
-  .menu,
-  .solo {
-    animation: none;
   }
 }

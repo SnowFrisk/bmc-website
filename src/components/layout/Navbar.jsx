@@ -1,17 +1,21 @@
 import { NavLink, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useTheme } from '../../hooks/useTheme'
+import { setAppLanguage, currentLanguage } from '../../i18n'
 import styles from './Navbar.module.css'
 
 const NAV_ITEMS = [
-  { to: '/problem',   label: '每週一問',  accentVar: '--potc-theme-color'      },
-  { to: '/speed',     label: '速算競技場', accentVar: '--speedmath-theme-color' },
-  { to: '/resources', label: '數學資源',  accentVar: '--resources-theme-color' },
-  { to: '/about',     label: '關於',      accentVar: '--about-theme-color' },
+  { to: '/problem',   labelKey: 'nav.problem',  accentVar: '--potc-theme-color'      },
+  { to: '/speed',     labelKey: 'nav.speed',    accentVar: '--speedmath-theme-color' },
+  { to: '/resources', labelKey: 'nav.resources', accentVar: '--resources-theme-color' },
+  { to: '/about',     labelKey: 'nav.about',    accentVar: '--about-theme-color' },
 ]
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme()
+  const { t } = useTranslation()
   const location = useLocation()
+  const lang = currentLanguage()
 
   // Find which accent colour belongs to the current route
   const activeItem = NAV_ITEMS.find(item => location.pathname.startsWith(item.to))
@@ -19,17 +23,21 @@ export default function Navbar() {
     ? `var(${activeItem.accentVar})`
     : 'var(--border)'
 
+  function toggleLanguage() {
+    setAppLanguage(lang === 'en' ? 'zh' : 'en')
+  }
+
   return (
     <nav className={styles.navbar} style={{ borderBottomColor: activeBorderColor }}>
       <div className={styles.navbar__container}>
         {/* Logo */}
         <NavLink to="/" className={styles.navbar__logo}>
-          ∫ BMC
+          BMC
         </NavLink>
 
         {/* Nav links */}
         <div className={styles.navbar__nav}>
-          {NAV_ITEMS.map(({ to, label, accentVar }) => (
+          {NAV_ITEMS.map(({ to, labelKey, accentVar }) => (
             <NavLink
               key={to}
               to={to}
@@ -43,7 +51,7 @@ export default function Navbar() {
                   : undefined,
               })}
             >
-              {label}
+              {t(labelKey)}
             </NavLink>
           ))}
         </div>

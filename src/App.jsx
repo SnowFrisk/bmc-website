@@ -11,6 +11,7 @@ import QuestionBank from './pages/QuestionBank'
 import Resources from './pages/Resources'
 import About from './pages/About'
 import Admin from './pages/Admin'
+import TrackSubmission from './pages/TrackSubmission'
 import NotFound from './pages/NotFound'
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
               <Route path="resources" element={<Resources />} />
               <Route path="about" element={<About />} />
               <Route path="admin" element={<Admin />} />
+              <Route path="track" element={<TrackSubmission />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
