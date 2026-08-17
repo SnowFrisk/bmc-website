@@ -18,8 +18,9 @@
   },
   "error": {
     "title": "Well... something went wrong.",
-    "message": "The app hit an unexpected error — please try refreshing the page. ",
-    "reload": "Reload"
+    "message": "Don't quite like that. Would you mind reload the page please?",
+    "reload": "Reload",
+    "contact": "Did the button help you? No? Please contact me then. With screenshots and descriptions of the error, thank you very much."
   },
   "notFound": "404!!! don't you be scared, but the Page is not found.",
   "home": {

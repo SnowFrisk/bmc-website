@@ -34,6 +34,7 @@ export default class ErrorBoundary extends Component {
               {this.state.error.toString()}
             </pre>
           )}
+          <p className={styles.message}>{i18n.t('contact')}</p>
         </div>
       )
     }

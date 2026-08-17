@@ -4,17 +4,13 @@
 // ONLY { text, timeLimit } so players cannot read the answer from JS.
 
 const LEVELS = {
-  1: { label: 'Easy',   maxA: 12, maxB: 12, ops: ['+', '-'] },
   2: { label: 'Medium', maxA: 120, maxB: 120, ops: ['×'] },
-  3: { label: 'Hard',   maxA: 40, maxB: 20, ops: ['+', '-', '×', '÷'] },
 }
 
 // Difficulty metadata shared by the SoloMode and battle pickers
 // (desc 係 i18n key——UI 文案集中喺字典；title 本身係英文)
 export const DIFFICULTIES = [
-  { level: 1, icon: '🌱', title: 'Easy',   descKey: 'speed.diff.easy' },
   { level: 2, icon: '⚡', title: 'Medium', descKey: 'speed.diff.medium' },
-  { level: 3, icon: '🔥', title: 'Hard',   descKey: 'speed.diff.hard' },
 ]
 
 function randInt(min, max) {
@@ -48,7 +44,7 @@ export function generateQuestion(level = 1) {
   return {
     text: `${safeA} ${op} ${b} = ?`,
     answer,
-    timeLimit: level === 1 ? 15 : level === 2 ? 12 : 10,
+    timeLimit: level === 1 ? 15 : level === 2 ? 20 : 10,
   }
 }
 
